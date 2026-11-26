@@ -30,6 +30,16 @@ export function presetShock(name: "warm_ocean" | "monsoon_stall", last: State): 
 
 /** Compact Gaussian: exactly zero beyond two sigma, so the footprint is bounded. */
 export function gaussianShock(ch: number, clat: number, clon: number, radius: number, amp: number): State {
+  if (!Number.isInteger(ch) || ch < 0 || ch >= CHANNELS.length) {
+    throw new RangeError("Shock channel must be an integer from 0 to 5.");
+  }
+  if (![clat, clon, radius, amp].every(Number.isFinite)) {
+    throw new RangeError("Gaussian shock parameters must all be finite numbers.");
+  }
+  if (radius <= 0) {
+    throw new RangeError("Gaussian shock radius must be greater than zero.");
+  }
+
   const d = zeros();
   for (let i = 0; i < NLAT; i++)
     for (let j = 0; j < NLON; j++) {

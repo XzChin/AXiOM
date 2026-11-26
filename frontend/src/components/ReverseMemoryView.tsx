@@ -206,8 +206,8 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               value={memShock}
               onChange={(e) => setMemShock(e.target.value as any)}
             >
-              <option value="warm_ocean">Warm Bay of Bengal (+3K, +15% TCWV)</option>
-              <option value="monsoon_stall">Monsoon Stall (Arabian Sea Wind Drag)</option>
+              <option value="warm_ocean">Warm Bay scenario (+3 K t2m, +15% TCWV)</option>
+              <option value="monsoon_stall">Monsoon Stall scenario (Arabian Sea 10 m winds -40%)</option>
             </select>
           </div>
           <div className="space-y-1">

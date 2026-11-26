@@ -19,6 +19,21 @@ describe("science utilities", () => {
   it("converts Kelvin to Celsius", () => expect(display(273.15, 0)).toBeCloseTo(0));
   it("zero amplitude gives a zero shock", () => expect(Math.max(...gaussianShock(0, 15, 88, 3, 0).map(maxAbs))).toBe(0));
   it("gaussian has compact support", () => expect(gaussianShock(0, 15, 88, 2, 1)[0][25][5]).toBe(0));
+  it("rejects invalid Gaussian channels", () => {
+    expect(() => gaussianShock(6, 15, 88, 2, 1)).toThrow(RangeError);
+    expect(() => gaussianShock(-1, 15, 88, 2, 1)).toThrow(RangeError);
+    expect(() => gaussianShock(1.5, 15, 88, 2, 1)).toThrow(RangeError);
+  });
+  it("rejects zero, negative, or non-finite Gaussian radii", () => {
+    expect(() => gaussianShock(0, 15, 88, 0, 1)).toThrow(RangeError);
+    expect(() => gaussianShock(0, 15, 88, -1, 1)).toThrow(RangeError);
+    expect(() => gaussianShock(0, 15, 88, Number.NaN, 1)).toThrow(RangeError);
+  });
+  it("rejects non-finite Gaussian coordinates and amplitude", () => {
+    expect(() => gaussianShock(0, Number.NaN, 88, 2, 1)).toThrow(RangeError);
+    expect(() => gaussianShock(0, 15, Number.POSITIVE_INFINITY, 2, 1)).toThrow(RangeError);
+    expect(() => gaussianShock(0, 15, 88, 2, Number.NaN)).toThrow(RangeError);
+  });
   it("monsoon stall only changes winds", () => {
     const last = zeros().map((g) => g.map((r) => r.map(() => 1)));
     const d = presetShock("monsoon_stall", last);
