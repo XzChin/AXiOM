@@ -1,11 +1,40 @@
 import { State, Grid, NLAT, NLON, CHANNELS, lat, lon, display, zeros, subtract, maxAbs, latRmse, gaussianShock, presetShock, validRollout, outsideResponse } from "./utils/science";
 
 // ---- Types ----
+export interface EvaluationLead {
+  csi: {
+    model: number;
+    persistence: number;
+    climatology: number;
+  };
+}
+
+export interface EvaluationResult {
+  years: number[];
+  windows: number;
+  invalid_windows: number;
+  mean_window_skill: number;
+  by_lead: {
+    day1: EvaluationLead;
+    day4: EvaluationLead;
+    day8: EvaluationLead;
+  };
+  day8_variance_ratio: number[];
+  anti_blur_points: number;
+  causality_mean_points_of_15: number;
+  causality_windows: number;
+  null_all_ok: boolean;
+  shock_pass_rate: Record<string, Record<string, number>>;
+}
+
+export interface ModelHealth { status: string; model_name: string }
+
 export interface Meta {
   has_data: boolean; days: number; first_date: string; land_mask: number[][];
   orography_m?: number[][]; stats?: { channels: string[]; mean: number[]; std: number[] };
   model_info?: Record<string, unknown>;
-  eval_val?: Record<string, unknown>; eval_test?: Record<string, unknown>;
+  eval_val?: EvaluationResult | null;
+  eval_test?: EvaluationResult | null;
 }
 export interface Window_ { date?: string; init_states: State[]; doy_sincos: number[]; truth?: State[]; id?: string; label?: string; synthetic_input?: boolean }
 export interface Run { rollout: State[]; inference_ms: number; at: string; wall_ms: number }
@@ -32,6 +61,7 @@ function post<T>(url: string, body: unknown): Promise<T> {
 export const checkHealth = () =>
   post<{ status: string; model_name?: string }>("/api/model/health", {});
 export const getMeta = () => json<Meta>("/api/meta");
+export const getModelHealth = () => post<ModelHealth>("/api/model/health", {});
 export const getWindow = (d: string) => json<Window_>(`/api/window?date=${encodeURIComponent(d)}`);
 export const getSampleWindows = () => json<Window_[]>("/api/sample-windows");
 

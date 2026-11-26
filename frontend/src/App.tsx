@@ -5,6 +5,7 @@ import {
   Window_,
   checkHealth,
   getMeta,
+  getModelHealth,
   getSampleWindows,
   getWindow,
   simulate,
@@ -125,6 +126,7 @@ export function App() {
 
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const [modelStatus, setModelStatus] = useState<"checking" | "ready" | "offline">("checking");
 
   // Initial connection check & sample loading
   useEffect(() => {

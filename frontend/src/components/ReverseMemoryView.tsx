@@ -141,7 +141,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
             disabled={!win || !!busy}
             onClick={handleRunReverse}
           >
-            Solve Optimal Shock Candidate
+            Find Best Evaluated Shock
           </button>
           {revResult && (
             <span className={`${ui.muted} tabular-nums`}>

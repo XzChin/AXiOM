@@ -1,4 +1,4 @@
-import { Meta } from "../api";
+import { Meta, EvaluationResult } from "../api";
 import { ui } from "../theme";
 
 interface Props {
@@ -249,19 +249,30 @@ export function TrustPanelView({ meta, serverStatus }: Props) {
         </div>
         <ul className="mt-3 list-inside list-disc space-y-2 text-xs leading-relaxed text-amber-100/80">
           <li>
-            <strong>Coarse Spatial Resolution:</strong> 1° × 1° ERA5 grid (~100 km) cannot resolve convective-scale thunderstorms, cloud microphysics, or complex mountain valley winds.
+            <strong>Coarse Spatial Resolution:</strong> The 1° × 1° ERA5 grid (approximately
+            100 km) cannot resolve convective-scale thunderstorms, cloud microphysics, or
+            complex mountain-valley winds.
           </li>
           <li>
-            <strong>Day-8 Rain Blur Weakness:</strong> Day-8 rainfall retains ~37% of real spatial variance, slightly below the 40% target, resulting in oversmoothed precipitation fields at longer leads.
+            <strong>Day-8 Rainfall Smoothing:</strong> The held-out evaluation reports a
+            rainfall variance ratio of {fmt(evalVal?.day8_variance_ratio?.[1])} on validation
+            and {fmt(evalTest?.day8_variance_ratio?.[1])} on test. These values indicate
+            reduced spatial variance at longer lead times.
           </li>
           <li>
-            <strong>Counterfactual Unobservability:</strong> Multiverse shocks (e.g. +3K Bay of Bengal) represent model response dynamics, not real-world counterfactual truth.
+            <strong>Counterfactual Unobservability:</strong> Multiverse shocks (for example,
+            a +3 K Bay of Bengal perturbation) represent model response dynamics, not
+            real-world counterfactual truth.
           </li>
           <li>
-            <strong>Uncalibrated Ensemble Spread:</strong> Ensemble spread is generated from initial-condition Gaussian perturbations and should not be treated as a formally calibrated probability without reliability diagram validation.
+            <strong>Uncalibrated Ensemble Spread:</strong> Ensemble spread is generated
+            from initial-condition Gaussian perturbations and should not be treated as a
+            formally calibrated probability without reliability-diagram validation.
           </li>
           <li>
-            <strong>Non-Operational Status:</strong> Multiverse of Monsoon is an AI research digital twin and must not be used for emergency disaster response or life-critical warnings.
+            <strong>Non-Operational Status:</strong> Multiverse of Monsoon is an AI research
+            digital twin and must not be used for emergency disaster response or
+            life-critical warnings.
           </li>
         </ul>
       </div>
