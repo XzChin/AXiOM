@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Meta, Run, Window_ } from "../api";
 import { GridMap } from "./GridMap";
 import { LineChart, Series } from "./LineChart";
 import { CHANNELS, Grid, State, display, lat, lon, latRmse, regionalMean, subtract, maxAbs } from "../utils/science";
 import { REGIONS, RegionId } from "../utils/india";
+import { palette, ui } from "../theme";
 
 interface Props {
   meta: Meta | null;
@@ -19,8 +20,6 @@ interface Props {
   selectedRegion: RegionId;
   setSelectedRegion: (r: RegionId) => void;
 }
-
-const card = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
 
 export function TimelinePrimeView({
   meta, win, base, shocked, ch, setCh, day, setDay, cell, setCell, selectedRegion, setSelectedRegion,
@@ -39,18 +38,22 @@ export function TimelinePrimeView({
     const wind = ch === 2 || ch === 3;
     const m = Math.max(...flat.map(Math.abs));
     const range: [number, number] = wind ? [-m, m] : [Math.min(...flat), Math.max(...flat)];
-    const list = [{ title: "Baseline Rollout (MODEL)", grid: b, range, diverging: wind }];
+    const list = [{ title: "Baseline Rollout [Model]", grid: b, range, diverging: wind }];
     if (s) {
-      const d = subtract(s, b), k = maxAbs(d) || 1;
+      const d = subtract(s, b);
+      const minDelta = ch === 4 ? 1.0 : 0.5;
+      const k = Math.max(maxAbs(d), minDelta);
       list.push(
-        { title: `Shocked: ${shocked?.label} (MODEL)`, grid: s, range, diverging: wind },
-        { title: "Anomaly Delta: Shocked − Base (DERIVED)", grid: d, range: [-k, k], diverging: true }
+        { title: `Shocked: ${shocked?.label} [Model]`, grid: s, range, diverging: wind },
+        { title: "Anomaly Delta: Shocked − Base [Derived]", grid: d, range: [-k, k], diverging: true }
       );
     } else if (t) {
-      const d = subtract(b, t), k = maxAbs(d) || 1;
+      const d = subtract(b, t);
+      const minDelta = ch === 4 ? 1.0 : 0.5;
+      const k = Math.max(maxAbs(d), minDelta);
       list.push(
-        { title: "Hindcast Truth ERA5 (OBSERVED)", grid: t, range, diverging: wind },
-        { title: "Forecast Error: Model − Truth (DERIVED)", grid: d, range: [-k, k], diverging: true }
+        { title: "Hindcast Truth ERA5 [Observed]", grid: t, range, diverging: wind },
+        { title: "Forecast Error: Model − Truth [Derived]", grid: d, range: [-k, k], diverging: true }
       );
     }
     return list;
@@ -73,9 +76,9 @@ export function TimelinePrimeView({
   const series: Series[] = [];
   if (base) {
     const at = (r: State[]) => r.map((s) => display(s[ch][cell[0]][cell[1]], ch));
-    series.push({ name: "Baseline Forecast", values: at(base.rollout), color: "#0284c7" });
-    if (shocked) series.push({ name: "Shocked Multi-verse", values: at(shocked.run.rollout), color: "#ea580c" });
-    if (win?.truth?.length === 10) series.push({ name: "Observed Hindcast Truth", values: at(win.truth), color: "#16a34a", dash: "6 4" });
+    series.push({ name: "Baseline Forecast [Model]", values: at(base.rollout), color: "#5F93B5" });
+    if (shocked) series.push({ name: "Shocked Multi-verse [Model]", values: at(shocked.run.rollout), color: palette.accent });
+    if (win?.truth?.length === 10) series.push({ name: "Observed Hindcast Truth", values: at(win.truth), color: "#E67E22", dash: "5 4" });
   }
 
   // Regional timeseries
@@ -83,104 +86,134 @@ export function TimelinePrimeView({
   if (base) {
     const regAt = (r: State[]) =>
       r.map((s) => regionalMean(shown(s), reg.lat as [number, number], reg.lon as [number, number], meta?.land_mask));
-    regSeries.push({ name: `${reg.name} (Baseline)`, values: regAt(base.rollout), color: "#0284c7" });
+    regSeries.push({ name: `${reg.name} (Baseline)`, values: regAt(base.rollout), color: "#5F93B5" });
     if (shocked) {
-      regSeries.push({ name: `${reg.name} (Shocked)`, values: regAt(shocked.run.rollout), color: "#ea580c" });
+      regSeries.push({ name: `${reg.name} (Shocked)`, values: regAt(shocked.run.rollout), color: palette.accent });
     }
   }
 
   return (
-    <div className="space-y-5">
-      {/* Forecast Controls Bar */}
-      <div className={`${card} flex flex-wrap items-center justify-between gap-4`}>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-2 text-xs font-bold uppercase tracking-wider text-slate-500">Forecast Day:</span>
-          {Array.from({ length: 10 }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setDay(i + 1)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                day === i + 1
-                  ? "bg-sky-700 text-white shadow-sm ring-2 ring-sky-700/20"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              Day +{i + 1}
-            </button>
-          ))}
-        </div>
+    <div className="space-y-6">
+      {/* Visual Anchor: Forecast Controls Bar */}
+      <div className={`${ui.card} border-l-4 border-l-teal-400 bg-twilight-surface`}>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Day Scrubbers */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className={ui.titleSm}>Lead Day:</span>
+            {Array.from({ length: 10 }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setDay(i + 1)}
+                className={`rounded-xl px-3 py-1.5 text-xs font-bold tabular-nums transition active:scale-95 ${
+                  day === i + 1
+                    ? "bg-teal-500 text-steel-900 shadow-md ring-2 ring-teal-400/40"
+                    : "bg-twilight-raised text-text-main hover:bg-twilight-hover hover:text-text-bright"
+                }`}
+              >
+                Day +{i + 1}
+              </button>
+            ))}
+          </div>
 
-        <div className="flex flex-wrap items-center gap-3 text-sm">
-          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-            Region:
-            <select
-              className="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-800 shadow-sm"
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value as RegionId)}
-            >
-              {Object.entries(REGIONS).map(([k, v]) => (
-                <option key={k} value={k}>{v.name}</option>
-              ))}
-            </select>
-          </label>
+          {/* Quick Selectors */}
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <label className="flex items-center gap-2 text-xs font-semibold text-text-muted">
+              Region:
+              <select
+                className={ui.selectInline}
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value as RegionId)}
+              >
+                {Object.entries(REGIONS).map(([k, v]) => (
+                  <option key={k} value={k}>{v.name}</option>
+                ))}
+              </select>
+            </label>
 
-          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-            Variable:
-            <select
-              className="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-800 shadow-sm"
-              value={ch}
-              onChange={(e) => setCh(+e.target.value)}
-            >
-              {CHANNELS.map((c, i) => (
-                <option key={c.id} value={i}>{c.label} ({c.unit})</option>
-              ))}
-            </select>
-          </label>
+            <label className="flex items-center gap-2 text-xs font-semibold text-text-muted">
+              Variable:
+              <select
+                className={ui.selectInline}
+                value={ch}
+                onChange={(e) => setCh(+e.target.value)}
+              >
+                {CHANNELS.map((c, i) => (
+                  <option key={c.id} value={i}>{c.label} ({c.unit})</option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
       </div>
 
-      {/* Grid Maps */}
-      <div className={card}>
-        <div className="mb-3 flex items-center justify-between border-b pb-2">
-          <h2 className="text-base font-bold text-slate-800">
-            India Spatial Field — Day +{day} ({CHANNELS[ch].label})
-          </h2>
-          <span className="text-xs text-slate-500">
-            Click on any grid cell to inspect local cell timeseries
-          </span>
+      {/* Main Visual Center: Spatial Map Workspace */}
+      <div className={ui.cardRaised}>
+        <div className={ui.cardHeader}>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
+              <h2 className={ui.titleLg}>
+                India Spatial Forecast — Day +{day} ({CHANNELS[ch].label})
+              </h2>
+            </div>
+            <p className={ui.muted}>
+              Autoregressive 10-day physical forecast simulated on 1-degree subcontinent grid.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className={ui.badgeAccent}>
+              Selected: [{lat(cell[0])}°N, {lon(cell[1])}°E]
+            </span>
+            <span className={ui.badgePrimary}>
+              Unit: {unit}
+            </span>
+          </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {maps.map((m) => (
-            <GridMap
-              key={m.title}
-              {...m}
-              unit={unit}
-              land={meta?.land_mask || []}
-              cell={cell}
-              onCell={setCell}
-              regionBounds={selectedRegion === "all_india" ? undefined : reg}
-            />
-          ))}
-        </div>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t pt-2 text-xs text-slate-500">
-          <span>
-            Selected-region boundary: {selectedRegion === "all_india"
-              ? "India geographical outline"
-              : `${reg.name} bounding box`}. Black line: Land-sea boundary.
+
+        {maps.length > 0 ? (
+          <div className={`grid gap-5 ${maps.length > 1 ? "md:grid-cols-2 lg:grid-cols-3" : "max-w-2xl mx-auto"}`}>
+            {maps.map((m) => (
+              <GridMap
+                key={m.title}
+                {...m}
+                unit={unit}
+                land={meta?.land_mask || []}
+                cell={cell}
+                onCell={setCell}
+                regionBounds={selectedRegion === "all_india" ? undefined : reg}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="py-14 text-center text-sm text-text-muted">
+            No forecast loaded. Select a climate archetype or historical date from the left controls.
+          </div>
+        )}
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-twilight-border pt-3 text-xs text-text-muted">
+          <span className="flex items-center gap-2 font-medium">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-teal-400" />
+            Click anywhere on the map to inspect local coordinate timeseries below.
           </span>
-          <span>Selected Cell: [{lat(cell[0])}°N, {lon(cell[1])}°E]</span>
+          <span className="text-text-subtle font-mono">
+            Selected-region boundary: {selectedRegion === "all_india" ? "India geographical outline" : `${reg.name} bounding box`} | Navy = Coastline
+          </span>
         </div>
       </div>
 
-      {/* Analytics & Graphs */}
-      <div className="grid gap-5 lg:grid-cols-2">
+      {/* Dual Analytics Cards: Point Trajectory & Regional Aggregate */}
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Cell Time-Series */}
-        <div className={card}>
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-bold text-slate-800">
-              Point Trajectory: Cell [{lat(cell[0])}°N, {lon(cell[1])}°E]
-            </h3>
-            <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+        <div className={ui.card}>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div>
+              <h3 className={ui.titleMd}>
+                Point Trajectory: Cell [{lat(cell[0])}°N, {lon(cell[1])}°E]
+              </h3>
+              <p className={ui.muted}>Autoregressive forecast path at clicked coordinates</p>
+            </div>
+            <span className={ui.badgeNeutral}>
               10-Day Horizon
             </span>
           </div>
@@ -188,16 +221,19 @@ export function TimelinePrimeView({
         </div>
 
         {/* Regional Time-Series & Summary */}
-        <div className={card}>
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-bold text-slate-800">
-              Regional Aggregate: {reg.name}
-            </h3>
+        <div className={ui.card}>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 className={ui.titleMd}>
+                Regional Domain Aggregate: {reg.name}
+              </h3>
+              <p className={ui.muted}>Mean over {reg.lat[0]}–{reg.lat[1]}°N, {reg.lon[0]}–{reg.lon[1]}°E</p>
+            </div>
             {regionalStats && (
-              <span className="rounded bg-sky-50 px-2 py-0.5 text-xs font-semibold text-sky-800">
+              <span className={`${ui.badgePrimary} tabular-nums`}>
                 Mean: {regionalStats.bMean.toFixed(2)} {unit}
                 {regionalStats.delta !== null && (
-                  <span className={regionalStats.delta >= 0 ? " text-orange-600" : " text-blue-600"}>
+                  <span className={regionalStats.delta >= 0 ? "text-teal-300 font-bold" : "text-amber-300 font-bold"}>
                     {" "}(Δ {regionalStats.delta > 0 ? "+" : ""}{regionalStats.delta.toFixed(2)})
                   </span>
                 )}
@@ -208,39 +244,45 @@ export function TimelinePrimeView({
         </div>
       </div>
 
-      {/* Truth vs Twin Verification Panel (when Hindcast is active) */}
+      {/* Truth vs Twin Verification Panel (when ERA5 Hindcast Truth is active) */}
       {win?.truth?.[day - 1] && base && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 text-emerald-950">
-          <div className="flex items-center justify-between">
-            <h4 className="font-bold text-emerald-900">
-              Hindcast Truth vs Twin Skill Audit (Day +{day})
-            </h4>
-            <span className="rounded bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
+        <div className="rounded-2xl border border-teal-500/50 bg-teal-900/20 p-5 shadow-md">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 className={ui.titleMd}>
+                Hindcast Verification vs Ground Truth ERA5 (Day +{day})
+              </h4>
+              <p className="text-xs text-text-muted">
+                Offline benchmark evaluation comparing AI forecast against observed ERA5 reanalysis
+              </p>
+            </div>
+            <span className={ui.badgeAccent}>
               VERIFIED AGAINST ERA5
             </span>
           </div>
-          <div className="mt-2 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
-            <div className="rounded-lg bg-white/80 p-3 shadow-xs">
-              <span className="block text-xs text-slate-500">Model Latitude-Weighted RMSE</span>
-              <span className="text-lg font-bold text-slate-800">
+
+          <div className="mt-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-3">
+            <div className="rounded-xl border border-twilight-border bg-twilight-surface p-4 shadow-sm tabular-nums">
+              <span className="block text-xs font-semibold text-text-muted">Model Latitude-Weighted RMSE</span>
+              <span className="mt-1 block text-lg font-bold text-text-bright">
                 {latRmse(shown(base.rollout[day - 1]), shown(win.truth[day - 1])).toFixed(3)} {unit}
               </span>
             </div>
-            <div className="rounded-lg bg-white/80 p-3 shadow-xs">
-              <span className="block text-xs text-slate-500">Persistence (Yesterday) Baseline</span>
-              <span className="text-lg font-bold text-slate-800">
+            <div className="rounded-xl border border-twilight-border bg-twilight-surface p-4 shadow-sm tabular-nums">
+              <span className="block text-xs font-semibold text-text-muted">Persistence Baseline RMSE</span>
+              <span className="mt-1 block text-lg font-bold text-text-bright">
                 {latRmse(shown(win.init_states[2]), shown(win.truth[day - 1])).toFixed(3)} {unit}
               </span>
             </div>
-            <div className="rounded-lg bg-white/80 p-3 shadow-xs">
-              <span className="block text-xs text-slate-500">Relative Skill over Persistence</span>
+            <div className="rounded-xl border border-twilight-border bg-twilight-surface p-4 shadow-sm tabular-nums">
+              <span className="block text-xs font-semibold text-text-muted">Relative Skill over Persistence</span>
               {(() => {
                 const mRmse = latRmse(shown(base.rollout[day - 1]), shown(win.truth[day - 1]));
                 const pRmse = latRmse(shown(win.init_states[2]), shown(win.truth[day - 1]));
                 const skill = pRmse > 0 ? ((pRmse - mRmse) / pRmse) * 100 : 0;
                 return (
-                  <span className={`text-lg font-bold ${skill >= 0 ? "text-emerald-700" : "text-rose-700"}`}>
-                    {skill >= 0 ? "+" : ""}{skill.toFixed(1)}% {skill >= 0 ? "improvement" : "degradation"}
+                  <span className={`mt-1 block text-lg font-bold ${skill >= 0 ? "text-teal-300" : "text-amber-300"}`}>
+                    {skill >= 0 ? "+" : ""}{skill.toFixed(1)}% {skill >= 0 ? "gain" : "loss"}
                   </span>
                 );
               })()}

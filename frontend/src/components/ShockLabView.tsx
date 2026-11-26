@@ -3,6 +3,7 @@ import { CertResult, Meta, Run, Window_, runCertificate, simulate } from "../api
 import { GridMap } from "./GridMap";
 import { LineChart, Series } from "./LineChart";
 import { CHANNELS, Grid, State, display, gaussianShock, lat, lon, maxAbs, presetShock, subtract, zeros } from "../utils/science";
+import { palette, ui } from "../theme";
 
 interface Props {
   meta: Meta | null;
@@ -18,11 +19,6 @@ interface Props {
   busy: string;
 }
 
-const card = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
-const btnPrimary = "rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-sky-800 disabled:opacity-40 transition";
-const btnSecondary = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 transition";
-const input = "w-full rounded-lg border border-slate-300 bg-white p-2 text-xs text-slate-800 shadow-sm";
-
 export function ShockLabView({
   meta, win, base, shocked, setShocked, day, setDay, cell, setCell, task, busy,
 }: Props) {
@@ -37,7 +33,7 @@ export function ShockLabView({
     return presetShock(kind, win!.init_states[2]);
   };
 
-  const handleRunShock = () => task("Simulating Shock Multiverse", async () => {
+  const handleRunShock = () => task("Simulating Shock Multiverse Scenario", async () => {
     if (!win) return;
     const delta = makeDelta();
     setCert(null);
@@ -53,7 +49,7 @@ export function ShockLabView({
     setShocked({ run: res, delta, label });
   });
 
-  const handleRunCertificate = () => task("Certifying Shock Behaviour", async () => {
+  const handleRunCertificate = () => task("Auditing Shock Behaviour Certificate", async () => {
     if (!win || !shocked) return;
     const certRes = await runCertificate(win, shocked.delta);
     setCert(certRes);
@@ -67,20 +63,21 @@ export function ShockLabView({
     const b = shown(base.rollout[day - 1]);
     const s = shown(shocked.run.rollout[day - 1]);
     const d = subtract(s, b);
-    const k = maxAbs(d) || 1;
+    const minDelta = ch === 4 ? 1.0 : 0.5;
+    const k = Math.max(maxAbs(d), minDelta);
     const wind = ch === 2 || ch === 3;
     const flat = [b, s].flat(2);
     const m = Math.max(...flat.map(Math.abs));
     const range: [number, number] = wind ? [-m, m] : [Math.min(...flat), Math.max(...flat)];
 
     return [
-      { title: "Control Baseline (MODEL)", grid: b, range, diverging: wind },
-      { title: `Shocked State: Day +${day} (MODEL)`, grid: s, range, diverging: wind },
-      { title: `Perturbation Delta: Shock − Base (DERIVED)`, grid: d, range: [-k, k] as [number, number], diverging: true },
+      { title: "Control Baseline [Model]", grid: b, range, diverging: wind },
+      { title: `Perturbed Scenario: Day +${day} [Model]`, grid: s, range, diverging: wind },
+      { title: `Perturbation Delta: Scenario − Base [Derived]`, grid: d, range: [-k, k] as [number, number], diverging: true },
     ];
   })();
 
-  // Butterfly Effect & Domino Tracker: calculate spread across the 10 days
+  // Butterfly Effect Domino Tracker: calculate spread across the 10 days
   const butterflyMetrics = (() => {
     if (!base || !shocked) return null;
     const rows = [];
@@ -104,7 +101,6 @@ export function ShockLabView({
           if (cellEnergy > 0.05) {
             affectedCells++;
             totalEnergy += cellEnergy;
-            // distance from center of shock if known
             const dist = Math.hypot(lat(i) - (kind === "custom" ? g.lat : 14), lon(j) - (kind === "custom" ? g.lon : 88));
             sumDist += dist * cellEnergy;
           }
@@ -126,35 +122,37 @@ export function ShockLabView({
     return rows;
   })();
 
-  // Butterfly Series for LineChart
   const dominoSeries: Series[] = butterflyMetrics
     ? [
-        { name: "Atmospheric Perturbation Energy", values: butterflyMetrics.map((r) => r.energy), color: "#ea580c" },
-        { name: "Domain Affected Area (%)", values: butterflyMetrics.map((r) => r.coverageFrac), color: "#8b5cf6" },
+        { name: "Perturbation Energy [Derived]", values: butterflyMetrics.map((r) => r.energy), color: palette.accent },
+        { name: "Affected Domain Area (%) [Derived]", values: butterflyMetrics.map((r) => r.coverageFrac), color: "#5F93B5" },
       ]
     : [];
 
   return (
-    <div className="space-y-5">
-      {/* Shock Configuration Controls */}
-      <div className={card}>
-        <div className="mb-3 flex items-center justify-between border-b pb-2">
+    <div className="space-y-6">
+      {/* Shock Controls: Located right above the comparison maps */}
+      <div className={`${ui.cardRaised} border-l-4 border-l-teal-400`}>
+        <div className={ui.cardHeader}>
           <div>
-            <h2 className="text-base font-bold text-slate-800">Multiverse Shock Lab & Perturbation Engine</h2>
-            <p className="text-xs text-slate-500">
-              Inject localized climate shocks into Day-0 atmosphere and simulate downstream domino cascades.
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
+              <h2 className={ui.titleLg}>Multiverse Scenario Lab &amp; Perturbation Engine</h2>
+            </div>
+            <p className={ui.muted}>
+              Apply bounded climate anomalies to Day-0 initial atmosphere and trace non-linear downstream cascades.
             </p>
           </div>
-          <span className="rounded bg-sky-100 px-2.5 py-1 text-xs font-semibold text-sky-800">
+          <span className={ui.badgeAccent}>
             OFFLINE CPU SIMULATION
           </span>
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-600">Shock Archetype:</label>
+            <label className={ui.label}>Shock Archetype:</label>
             <select
-              className={input}
+              className={ui.input}
               value={kind}
               onChange={(e) => setKind(e.target.value as any)}
               disabled={!!busy}
@@ -162,16 +160,16 @@ export function ShockLabView({
               <option value="warm_ocean">Warm Bay of Bengal (+3K SST, +15% TCWV)</option>
               <option value="monsoon_stall">Monsoon Stall (Arabian Sea Wind Drag -40%)</option>
               <option value="zero">Zero / Null Shock (Exact Identity Test)</option>
-              <option value="custom">Custom Gaussian Perturbation</option>
+              <option value="custom">Custom Gaussian Anomaly</option>
             </select>
           </div>
 
           {kind === "custom" ? (
             <>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-600">Target Channel:</label>
+                <label className={ui.label}>Target Channel:</label>
                 <select
-                  className={input}
+                  className={ui.input}
                   value={g.ch}
                   onChange={(e) => setG({ ...g, ch: +e.target.value })}
                 >
@@ -181,18 +179,18 @@ export function ShockLabView({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-600">Location [Lat, Lon]:</label>
-                <div className="grid grid-cols-2 gap-1">
+                <label className={ui.label}>Center Coordinates [Lat, Lon]:</label>
+                <div className="grid grid-cols-2 gap-2">
                   <input
                     type="number"
-                    className={input}
+                    className={ui.input}
                     placeholder="Lat"
                     value={g.lat}
                     onChange={(e) => setG({ ...g, lat: +e.target.value })}
                   />
                   <input
                     type="number"
-                    className={input}
+                    className={ui.input}
                     placeholder="Lon"
                     value={g.lon}
                     onChange={(e) => setG({ ...g, lon: +e.target.value })}
@@ -200,19 +198,19 @@ export function ShockLabView({
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-600">Radius (deg) & Amp:</label>
-                <div className="grid grid-cols-2 gap-1">
+                <label className={ui.label}>Radius (deg) &amp; Amplitude:</label>
+                <div className="grid grid-cols-2 gap-2">
                   <input
                     type="number"
-                    className={input}
+                    className={ui.input}
                     placeholder="Radius"
                     value={g.radius}
                     onChange={(e) => setG({ ...g, radius: +e.target.value })}
                   />
                   <input
                     type="number"
-                    className={input}
-                    placeholder="Amplitude"
+                    className={ui.input}
+                    placeholder="Amp"
                     value={g.amp}
                     onChange={(e) => setG({ ...g, amp: +e.target.value })}
                   />
@@ -220,31 +218,31 @@ export function ShockLabView({
               </div>
             </>
           ) : (
-            <div className="col-span-3 flex items-center justify-between rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
+            <div className="col-span-3 flex items-center justify-between rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5 text-xs text-text-main">
               {kind === "warm_ocean" && (
-                <span>Perturbs +3.0 K temperature and +15% precipitable water vapour in Bay of Bengal [8–20°N, 82–94°E].</span>
+                <span>Perturbs +3.0 K temperature anomaly and +15% precipitable water vapour in Bay of Bengal box [8–20°N, 82–94°E].</span>
               )}
               {kind === "monsoon_stall" && (
-                <span>Perturbs -40% u-wind and -40% v-wind deceleration in Arabian Sea [8–20°N, 65–75°E].</span>
+                <span>Perturbs -40% u-wind and -40% v-wind deceleration drag in Arabian Sea box [8–20°N, 65–75°E].</span>
               )}
               {kind === "zero" && (
-                <span>Zero perturbation array. Verifies that running with zero perturbation exactly replicates baseline forecast.</span>
+                <span>Zero perturbation array. Verifies that running with null shock produces bitwise identical rollout to baseline.</span>
               )}
             </div>
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-3">
-          <div className="flex items-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
-              className={btnPrimary}
+              className={ui.btnAccent}
               disabled={!win || !base || !!busy}
               onClick={handleRunShock}
             >
               Simulate Shock Rollout
             </button>
             <button
-              className={btnSecondary}
+              className={ui.btnSecondary}
               disabled={!shocked || !!busy}
               onClick={handleRunCertificate}
             >
@@ -252,9 +250,9 @@ export function ShockLabView({
             </button>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-semibold text-slate-600">Display Variable:</span>
+            <span className="font-semibold text-text-muted">Display Channel:</span>
             <select
-              className="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-800 shadow-sm"
+              className={ui.selectInline}
               value={ch}
               onChange={(e) => setCh(+e.target.value)}
             >
@@ -266,30 +264,30 @@ export function ShockLabView({
         </div>
       </div>
 
-      {/* Tri-Panel Grid Map: Base vs Shocked vs Delta */}
+      {/* Tri-Panel Comparison Grid: Baseline vs Scenario vs Difference */}
       {base && shocked ? (
-        <div className={card}>
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b pb-2">
-            <div className="flex items-center gap-1">
-              <span className="mr-2 text-xs font-bold text-slate-600">Day:</span>
+        <div className={ui.card}>
+          <div className={ui.cardHeader}>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className={ui.titleSm}>Lead Day:</span>
               {Array.from({ length: 10 }, (_, i) => (
                 <button
                   key={i}
                   onClick={() => setDay(i + 1)}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold ${
-                    day === i + 1 ? "bg-sky-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  className={`rounded-xl px-3 py-1.5 text-xs font-bold tabular-nums transition ${
+                    day === i + 1 ? "bg-teal-500 text-steel-900 shadow-sm" : "bg-twilight-base text-text-main hover:bg-twilight-hover"
                   }`}
                 >
                   +{i + 1}
                 </button>
               ))}
             </div>
-            <span className="text-xs font-semibold text-orange-700">
-              Multiverse Scenario: {shocked.label}
+            <span className={ui.badgeAccent}>
+              Active Scenario: {shocked.label}
             </span>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {maps.map((m) => (
               <GridMap
                 key={m.title}
@@ -303,47 +301,47 @@ export function ShockLabView({
           </div>
         </div>
       ) : (
-        <div className={`${card} text-center text-sm text-slate-500`}>
-          Simulate a shock above to view side-by-side Base / Shocked / Delta spatial comparison.
+        <div className={`${ui.card} py-16 text-center text-sm text-text-muted`}>
+          Click <strong>Simulate Shock Rollout</strong> above to view side-by-side Baseline, Shocked Scenario, and Anomaly Difference maps.
         </div>
       )}
 
-      {/* Atmospheric Butterfly Effect & Monsoon Domino Tracker */}
+      {/* Domino Dynamics & Cascade Table */}
       {butterflyMetrics && (
-        <div className="grid gap-5 lg:grid-cols-2">
-          <div className={card}>
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">
-                Atmospheric Butterfly Effect — Perturbation Growth
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className={ui.card}>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h3 className={ui.titleMd}>
+                Perturbation Domino Dynamics [Derived]
               </h3>
-              <span className="rounded bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-800">
-                DOMINO DYNAMICS
+              <span className={ui.badgePrimary}>
+                CASCADE EVOLUTION
               </span>
             </div>
             <LineChart series={dominoSeries} unit="Score / %" />
           </div>
 
-          <div className={card}>
-            <h3 className="mb-2 font-bold text-slate-800">Monsoon Domino Cascade Table</h3>
-            <div className="max-h-60 overflow-y-auto">
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="sticky top-0 bg-slate-100 text-slate-600">
+          <div className={ui.card}>
+            <h3 className={`mb-3 ${ui.titleMd}`}>Monsoon Domino Cascade Metrics [Derived]</h3>
+            <div className={`${ui.tableWrap} max-h-64 overflow-y-auto`}>
+              <table className={ui.table}>
+                <thead className={`${ui.thead} sticky top-0`}>
                   <tr>
-                    <th className="p-2">Lead</th>
-                    <th className="p-2">Perturbation Energy</th>
-                    <th className="p-2">Max |Δ|/σ</th>
-                    <th className="p-2">Affected Cells</th>
-                    <th className="p-2">Dispersion Radius</th>
+                    <th className="p-3">Lead</th>
+                    <th className="p-3">Anomaly Energy</th>
+                    <th className="p-3">Max |Δ|/σ</th>
+                    <th className="p-3">Affected Grid Cells</th>
+                    <th className="p-3">Effective Radius</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className={ui.tbody}>
                   {butterflyMetrics.map((row) => (
-                    <tr key={row.day} className={day === row.day ? "bg-sky-50 font-semibold" : "hover:bg-slate-50"}>
-                      <td className="p-2">Day +{row.day}</td>
-                      <td className="p-2">{row.energy.toFixed(2)}</td>
-                      <td className="p-2">{row.maxZ.toFixed(2)} σ</td>
-                      <td className="p-2">{row.affectedCells} ({row.coverageFrac.toFixed(1)}%)</td>
-                      <td className="p-2">{row.meanRadius.toFixed(1)}° lat/lon</td>
+                    <tr key={row.day} className={day === row.day ? "bg-steel-600/30 font-semibold text-teal-300" : "hover:bg-twilight-hover/40"}>
+                      <td className="p-3">Day +{row.day}</td>
+                      <td className="p-3">{row.energy.toFixed(2)}</td>
+                      <td className="p-3">{row.maxZ.toFixed(2)} σ</td>
+                      <td className="p-3">{row.affectedCells} ({row.coverageFrac.toFixed(1)}%)</td>
+                      <td className="p-3">{row.meanRadius.toFixed(1)}° lat/lon</td>
                     </tr>
                   ))}
                 </tbody>
@@ -355,54 +353,52 @@ export function ShockLabView({
 
       {/* Shock Behaviour Certificate Panel */}
       {cert && (
-        <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-100 pb-3">
+        <div className="rounded-2xl border border-teal-500/50 bg-teal-950/20 p-5 shadow-md">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-twilight-border pb-3.5">
             <div>
-              <h3 className="font-bold text-indigo-950">
+              <h3 className={ui.titleMd}>
                 Shock Behaviour Certificate (8-Check Protocol)
               </h3>
-              <p className="text-xs text-indigo-700">
-                Rigorous mathematical audit verifying locality, zero identity, boundedness, physical plausibility, and determinism.
+              <p className="text-xs text-text-muted">
+                Mathematical audit verifying locality, zero identity, boundedness, physical plausibility, and determinism.
               </p>
             </div>
-            <span className={`rounded-full px-3 py-1 text-xs font-bold ${
+            <span className={`rounded-full px-3 py-1 text-xs font-bold tabular-nums ${
               cert.passed_count === cert.total_checks
-                ? "bg-emerald-600 text-white"
-                : "bg-amber-600 text-white"
+                ? "bg-teal-500 text-steel-950"
+                : "bg-amber-500 text-steel-950"
             }`}>
               {cert.passed_count} / {cert.total_checks} CHECKS PASSED
             </span>
           </div>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
             {cert.checks.map((c) => (
               <div
                 key={c.id}
-                className="flex items-start justify-between rounded-lg bg-white/90 p-3 shadow-xs"
+                className="flex items-start justify-between rounded-xl border border-twilight-border bg-twilight-surface p-3.5 shadow-sm"
               >
-                <div>
+                <div className="min-w-0 pr-2">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-block h-2.5 w-2.5 rounded-full ${
-                        c.passed ? "bg-emerald-600" : "bg-rose-500"
+                      className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${
+                        c.passed ? "bg-teal-400" : "bg-amber-400"
                       }`}
                     />
-                    <span className="text-xs font-bold text-slate-800">{c.name}</span>
+                    <span className="text-xs font-bold text-text-bright">{c.name}</span>
                   </div>
-                  <span className="mt-1 block text-xs text-slate-500">{c.detail}</span>
+                  <span className="mt-1 block text-xs text-text-muted tabular-nums">{c.detail}</span>
                 </div>
                 <span
-                  className={`rounded px-2 py-0.5 text-xs font-bold ${
-                    c.passed ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
-                  }`}
+                  className={c.passed ? ui.badgeAccent : ui.badgeWarning}
                 >
                   {c.passed ? "PASS" : "FAIL"}
                 </span>
               </div>
             ))}
           </div>
-          <div className="mt-3 text-xs text-indigo-800">
-            Audit executed via live backend inference in {cert.inference_ms.toFixed(0)} ms.
+          <div className="mt-3.5 text-xs font-medium text-text-muted tabular-nums">
+            Audit verified via live inference in {cert.inference_ms.toFixed(0)} ms.
           </div>
         </div>
       )}
