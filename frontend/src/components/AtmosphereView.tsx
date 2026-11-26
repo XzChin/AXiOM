@@ -113,7 +113,7 @@ export function AtmosphereView({
               onClick={() => setLayer(item.id as any)}
               className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
                 layer === item.id
-                  ? "bg-steel-500 text-text-bright shadow-sm"
+                  ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                   : "bg-twilight-raised text-text-main hover:bg-twilight-hover"
               }`}
             >
@@ -157,7 +157,7 @@ export function AtmosphereView({
             </span>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className={`grid gap-5 ${mapList.length > 1 ? "md:grid-cols-2" : "grid-cols-1"}`}>
             {mapList.map((m) => (
               <GridMap
                 key={m.title}
@@ -197,19 +197,19 @@ export function AtmosphereView({
           <h3 className={`mb-3 ${ui.titleMd}`}>Meteorological Diagnostic Notes</h3>
           <div className="space-y-3 text-xs text-text-main">
             <div className="rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5">
-              <span className="font-bold text-teal-300">Moisture Transport Jet (Findlater Jet):</span>
+              <span className="font-bold text-[#75472F]">Moisture Transport Jet (Findlater Jet):</span>
               <p className="mt-1 leading-relaxed text-text-muted">
                 Strong low-level cross-equatorial southwesterly flow transports precipitable water vapor from the Arabian Sea across the Western Ghats into central India.
               </p>
             </div>
             <div className="rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5">
-              <span className="font-bold text-steel-200">Monsoon Trough Pressure Anomaly:</span>
+              <span className="font-bold text-[#29364A]">Monsoon Trough Pressure Anomaly:</span>
               <p className="mt-1 leading-relaxed text-text-muted">
                 Negative pressure anomalies along the Indo-Gangetic Plain and northern Bay of Bengal signal active monsoon trough depressions that steer rainfall clusters.
               </p>
             </div>
             <div className="rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5">
-              <span className="font-bold text-teal-400">Orographic Triggering:</span>
+              <span className="font-bold text-[#75472F]">Orographic Triggering:</span>
               <p className="mt-1 leading-relaxed text-text-muted">
                 Elevated terrain along the Western Ghats and Himalayan foothills generates intense mechanical lifting, driving localized heavy precipitation.
               </p>

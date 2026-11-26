@@ -31,7 +31,7 @@ export function ConsequenceView({ meta, base, shocked }: Props) {
     seriesFlood.push({
       name: "Baseline Heavy Rain Risk Fraction [Proxy]",
       values: baseProxies.map((p) => p.flood_frac * 100),
-      color: palette.accent,
+      color: "#5F93B5",
     });
   }
   if (shockedProxies.length > 0) {
@@ -44,7 +44,7 @@ export function ConsequenceView({ meta, base, shocked }: Props) {
     seriesFlood.push({
       name: "Shocked Heavy Rain Risk Fraction [Proxy]",
       values: shockedProxies.map((p) => p.flood_frac * 100),
-      color: "#C7F3EE",
+      color: "#E67E22",
       dash: "5 3",
     });
   }
@@ -95,16 +95,16 @@ export function ConsequenceView({ meta, base, shocked }: Props) {
   return (
     <div className="space-y-6">
       {/* Explicit Scientific Disclaimer Banner */}
-      <div className="rounded-2xl border border-amber-500/40 bg-amber-950/20 p-5 shadow-sm">
+      <div className="rounded-2xl border border-[#C99A75] bg-[#F2E2D7] p-5 shadow-sm">
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="rounded-md bg-amber-500/30 border border-amber-400/50 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-300">
+          <span className="rounded-md bg-[#A66A45] border border-[#905535] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#FFFEFA]">
             PROXY SCREENING ONLY
           </span>
-          <h2 className="text-sm font-bold text-amber-200">
+          <h2 className="text-sm font-bold text-[#29364A]">
             Decision-Support Screening &amp; Agro-Climatic Impact Proxies
           </h2>
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-amber-100/80">
+        <p className="mt-2 text-xs leading-relaxed text-[#5A4634]">
           These impact metrics are purely scientific screening proxies derived from grid rainfall thresholds (&lt; 2 mm/day agricultural dry spell, &gt; 50 mm/day extreme precipitation). They are <strong>NOT official operational flood or drought warnings</strong>. Official meteorological advisories and warnings are issued solely by the India Meteorological Department (IMD).
         </p>
       </div>

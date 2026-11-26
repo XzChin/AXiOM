@@ -1,87 +1,81 @@
 /**
- * Multiverse of Monsoon - Mid-Tone Twilight Design System
- *
- * - Primary: Steel Blue (#3B6D8A)
- * - Secondary: Slate Blue-Gray (#344650)
- * - Accent: Vivid Teal (#39BDAE)
- *
- * Avoids both bright white/light surfaces and very dark/black surfaces.
+ * Multiverse of Monsoon — Warm Earth Design System
+ * Application palette: Warm Chalk, Paper White, Deep Navy, Terracotta.
+ * Scientific map ramps remain independently defined in GridMap.tsx.
  */
 
 export const palette = {
-  // Brand foundations
-  primary: "#3B6D8A",
-  primaryHover: "#4F85A5",
-  primaryDark: "#27495E",
-  primaryLight: "#DCE7F0",
+  primary: "#1D2A3E",
+  primaryHover: "#2B3A52",
+  primaryDark: "#142136",
+  primaryLight: "#E8E3D9",
 
-  secondaryBg: "#344650",
-  secondarySurface: "#3A4E5A",
-  secondaryRaised: "#415764",
-  secondaryHover: "#48606F",
-  secondaryBorder: "#4D6675",
-  secondaryBorderSubtle: "#425866",
+  secondaryBg: "#F7F5EF",
+  secondarySurface: "#FFFEFA",
+  secondaryRaised: "#F0E9DD",
+  secondaryHover: "#E9DFC9",
+  secondaryBorder: "#DED6C9",
+  secondaryBorderSubtle: "#EBE5DA",
 
-  accent: "#39BDAE",
-  accentHover: "#4CD4C5",
-  accentDark: "#19665E",
-  accentLight: "#C7F3EE",
+  accent: "#A66A45",
+  accentHover: "#905535",
+  accentDark: "#75472F",
+  accentLight: "#F2E2D7",
 
-  // Text colors
-  textBright: "#F4F7F9",
-  textMain: "#E3EBF0",
-  textMuted: "#A9BDC8",
-  textSubtle: "#829AA7",
+  textBright: "#1D2A3E",
+  textMain: "#29364A",
+  textMuted: "#5C6676",
+  textSubtle: "#7A8491",
 
-  // Scientific visualization palette
-  divergingPositive: "#DC2626", // Crimson red excess/warm anomaly
-  divergingNegative: "#2563EB", // Deep blue deficit/cool anomaly
-  mapLandBoundary: "#20303A",   // Contrast coastlines
-  indiaBoundary: "#F5A623",     // Contrast gold boundary overlay
-  selectionHighlight: "#F5A623",// Contrast gold marker
+  // Preserve scientific anomaly colours.
+  divergingPositive: "#DC2626",
+  divergingNegative: "#2563EB",
+  mapLandBoundary: "#1D2A3E",
+  indiaBoundary: "#1D2A3E",
+  selectionHighlight: "#A66A45",
 } as const;
 
 export const ui = {
-  // Cards & surfaces
-  card: "rounded-2xl border border-twilight-border bg-twilight-surface p-5 shadow-sm transition-all",
-  cardRaised: "rounded-2xl border border-twilight-border bg-twilight-raised p-5 shadow-md",
-  cardSubtle: "rounded-2xl border border-twilight-subtle bg-twilight-base/70 p-4",
+  // Surfaces
+  card: "rounded-2xl border border-twilight-border bg-twilight-surface p-4 shadow-none transition-colors",
+  cardRaised: "rounded-2xl border border-twilight-border bg-twilight-surface p-4 shadow-none",
+  cardSubtle: "rounded-xl border border-twilight-border-subtle bg-twilight-base/70 p-3.5",
   cardHeader: "mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-twilight-border pb-3",
 
   // Typography
   titleLg: "text-lg font-bold tracking-tight text-text-bright",
   titleMd: "text-base font-bold tracking-tight text-text-bright",
-  titleSm: "text-xs font-bold uppercase tracking-wider text-teal-300",
+  titleSm: "text-xs font-bold uppercase tracking-wider text-teal-700",
   muted: "text-xs text-text-muted leading-relaxed",
-  label: "block text-xs font-semibold text-text-main mb-1",
+  label: "mb-1 block text-xs font-semibold text-text-main",
 
   // Buttons
   btnPrimary:
-    "inline-flex items-center justify-center rounded-xl bg-steel-500 px-4 py-2 text-xs font-bold text-text-bright shadow-sm hover:bg-steel-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-400 disabled:cursor-not-allowed disabled:opacity-45 transition active:scale-[0.98]",
+    "inline-flex items-center justify-center rounded-xl bg-steel-500 px-4 py-2.5 text-xs font-bold text-white shadow-none hover:bg-steel-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 disabled:cursor-not-allowed disabled:opacity-45 transition active:scale-[0.98]",
   btnAccent:
-    "inline-flex items-center justify-center rounded-xl bg-teal-500 px-4 py-2 text-xs font-bold text-steel-900 shadow-sm hover:bg-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 disabled:cursor-not-allowed disabled:opacity-45 transition active:scale-[0.98]",
+    "inline-flex items-center justify-center rounded-xl bg-teal-500 px-4 py-2.5 text-xs font-bold text-white shadow-none hover:bg-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 disabled:cursor-not-allowed disabled:opacity-45 transition active:scale-[0.98]",
   btnSecondary:
-    "inline-flex items-center justify-center rounded-xl border border-twilight-border bg-twilight-raised px-3.5 py-2 text-xs font-semibold text-text-bright shadow-2xs hover:bg-twilight-hover hover:border-steel-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-400 disabled:cursor-not-allowed disabled:opacity-45 transition",
+    "inline-flex items-center justify-center rounded-xl border border-twilight-border bg-twilight-surface px-3.5 py-2 text-xs font-semibold text-text-main shadow-none hover:bg-twilight-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 disabled:cursor-not-allowed disabled:opacity-45 transition",
 
-  // Inputs & forms
+  // Inputs
   input:
-    "w-full rounded-xl border border-twilight-border bg-twilight-base px-3 py-2 text-xs text-text-bright placeholder:text-text-subtle shadow-inner focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/20 disabled:opacity-50",
+    "w-full rounded-xl border border-twilight-border bg-twilight-surface px-3 py-2.5 text-xs text-text-main placeholder:text-text-subtle shadow-none focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/15 disabled:opacity-50",
   selectInline:
-    "rounded-xl border border-twilight-border bg-twilight-base px-3 py-1.5 text-xs font-semibold text-text-bright shadow-2xs focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/20",
+    "rounded-xl border border-twilight-border bg-twilight-surface px-3 py-1.5 text-xs font-semibold text-text-main shadow-none focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/15",
 
-  // Badges & pills
+  // Badges
   badgePrimary:
-    "inline-flex items-center rounded-full bg-steel-600/60 border border-steel-400/40 px-2.5 py-0.5 text-[11px] font-bold text-steel-100",
+    "inline-flex items-center rounded-full border border-steel-200 bg-steel-100 px-2.5 py-0.5 text-[11px] font-bold text-steel-800",
   badgeAccent:
-    "inline-flex items-center rounded-full bg-teal-500/20 border border-teal-400/50 px-2.5 py-0.5 text-[11px] font-bold text-teal-300",
+    "inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 text-[11px] font-bold text-teal-700",
   badgeNeutral:
-    "inline-flex items-center rounded-full bg-twilight-raised border border-twilight-border px-2.5 py-0.5 text-[11px] font-medium text-text-muted",
+    "inline-flex items-center rounded-full border border-twilight-border bg-twilight-raised px-2.5 py-0.5 text-[11px] font-medium text-text-muted",
   badgeWarning:
-    "inline-flex items-center rounded-full bg-amber-500/20 border border-amber-400/50 px-2.5 py-0.5 text-[11px] font-bold text-amber-300",
+    "inline-flex items-center rounded-full border border-amber-400/50 bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-amber-800",
 
   // Tables
-  tableWrap: "overflow-x-auto rounded-xl border border-twilight-border bg-twilight-base/50",
+  tableWrap: "overflow-x-auto rounded-xl border border-twilight-border bg-twilight-surface",
   table: "w-full text-left text-xs text-text-main tabular-nums",
-  thead: "bg-twilight-raised text-[11px] font-bold uppercase tracking-wider text-text-muted border-b border-twilight-border",
-  tbody: "divide-y divide-twilight-border/60 bg-twilight-surface/60",
+  thead: "border-b border-twilight-border bg-twilight-raised text-[11px] font-bold uppercase tracking-wider text-text-muted",
+  tbody: "divide-y divide-twilight-border/60 bg-twilight-surface",
 } as const;

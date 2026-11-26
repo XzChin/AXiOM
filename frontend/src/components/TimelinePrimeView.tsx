@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Meta, Run, Window_ } from "../api";
 import { GridMap } from "./GridMap";
 import { LineChart, Series } from "./LineChart";
@@ -59,6 +59,9 @@ export function TimelinePrimeView({
     return list;
   }, [base, shocked, win, ch, day]);
 
+  const [selectedMap, setSelectedMap] = useState(0);
+  const activeMap = maps[selectedMap] ?? maps[0];
+
   // Regional summary stats
   const regionalStats = useMemo(() => {
     if (!base) return null;
@@ -93,7 +96,7 @@ export function TimelinePrimeView({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="forecast-workspace space-y-4">
       {/* Visual Anchor: Forecast Controls Bar */}
       <div className={`${ui.card} border-l-4 border-l-teal-400 bg-twilight-surface`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -106,7 +109,7 @@ export function TimelinePrimeView({
                 onClick={() => setDay(i + 1)}
                 className={`rounded-xl px-3 py-1.5 text-xs font-bold tabular-nums transition active:scale-95 ${
                   day === i + 1
-                    ? "bg-teal-500 text-steel-900 shadow-md ring-2 ring-teal-400/40"
+                    ? "bg-[#A66A45] text-white shadow-sm ring-2 ring-[#A66A45]/20"
                     : "bg-twilight-raised text-text-main hover:bg-twilight-hover hover:text-text-bright"
                 }`}
               >
@@ -165,25 +168,51 @@ export function TimelinePrimeView({
             <span className={ui.badgeAccent}>
               Selected: [{lat(cell[0])}°N, {lon(cell[1])}°E]
             </span>
-            <span className={ui.badgePrimary}>
+            <span className="inline-flex items-center rounded-full border border-[#A66A45] bg-[#F2E2D7] px-3 py-1 text-xs font-bold text-[#75472F]">
               Unit: {unit}
             </span>
           </div>
         </div>
 
-        {maps.length > 0 ? (
-          <div className={`grid gap-5 ${maps.length > 1 ? "md:grid-cols-2 lg:grid-cols-3" : "max-w-2xl mx-auto"}`}>
-            {maps.map((m) => (
+        {maps.length > 0 && activeMap ? (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Forecast map view">
+              {maps.map((m, index) => {
+                const label = index === 0
+                  ? "Baseline"
+                  : index === 1
+                    ? (shocked ? "Scenario" : "Observed")
+                    : (shocked ? "Delta" : "Error");
+
+                return (
+                  <button
+                    key={m.title}
+                    type="button"
+                    onClick={() => setSelectedMap(index)}
+                    aria-pressed={selectedMap === index}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                      selectedMap === index
+                        ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
+                        : "border border-[#DED6C9] bg-[#FFFEFA] text-[#5A4634] hover:bg-[#E9DFC9]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mx-auto w-full max-w-[620px]">
               <GridMap
-                key={m.title}
-                {...m}
+                key={activeMap.title}
+                {...activeMap}
                 unit={unit}
                 land={meta?.land_mask || []}
                 cell={cell}
                 onCell={setCell}
                 regionBounds={selectedRegion === "all_india" ? undefined : reg}
               />
-            ))}
+            </div>
           </div>
         ) : (
           <div className="py-14 text-center text-sm text-text-muted">

@@ -264,3 +264,439 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* =========================================================================
+   WARM EARTH APPLICATION THEME
+   Remaps the existing utility tokens so component behaviour remains intact.
+   ========================================================================= */
+
+:root {
+  --twilight-base: #F4F0E8;
+  --twilight-bg: #F7F5EF;
+  --twilight-surface: #FFFEFA;
+  --twilight-surface-raised: #F0E9DD;
+  --twilight-surface-hover: #E9DFC9;
+  --twilight-border: #DED6C9;
+  --twilight-border-subtle: #EBE5DA;
+
+  /* Deep navy scale */
+  --steel-50: #F1F3F6;
+  --steel-100: #E4E8EE;
+  --steel-200: #CAD2DE;
+  --steel-300: #A8B5C8;
+  --steel-400: #6F819A;
+  --steel-500: #1D2A3E;
+  --steel-600: #19263A;
+  --steel-700: #142136;
+  --steel-800: #101B2E;
+  --steel-900: #0B1528;
+
+  /* Terracotta scale */
+  --teal-50: #FAF2EC;
+  --teal-100: #F2E2D7;
+  --teal-200: #DAB59C;
+  --teal-300: #A66A45;
+  --teal-400: #A66A45;
+  --teal-500: #A66A45;
+  --teal-600: #905535;
+  --teal-700: #75472F;
+  --teal-800: #583522;
+  --teal-900: #3F291E;
+
+  --text-bright: #1D2A3E;
+  --text-main: #29364A;
+  --text-muted: #5C6676;
+  --text-subtle: #7A8491;
+
+  --alert-amber-bg: rgba(166, 106, 69, 0.10);
+  --alert-amber-border: rgba(166, 106, 69, 0.35);
+  --alert-amber-text: #75472F;
+
+  --alert-red-bg: rgba(185, 55, 55, 0.08);
+  --alert-red-border: rgba(185, 55, 55, 0.30);
+  --alert-red-text: #9B3434;
+
+  --font-display: Georgia, Cambria, "Times New Roman", serif;
+  --font-body: "Segoe UI Variable", "Aptos", "Segoe UI", sans-serif;
+  --font-data: "Cascadia Code", Consolas, monospace;
+}
+
+@layer base {
+  body {
+    background: var(--twilight-bg);
+    color: var(--text-main);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-bright);
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline-color: var(--teal-500);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--twilight-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--twilight-border);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--teal-400);
+  }
+}
+
+/* Remove the old dark, gradient-heavy dashboard treatment. */
+.app-shell {
+  min-height: 100vh;
+  background: var(--twilight-bg);
+  color: var(--text-main);
+}
+
+.app-shell header {
+  border-color: var(--twilight-border);
+  background: rgba(255, 254, 250, 0.96);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.workspace-hero {
+  min-height: 0;
+  align-items: flex-end;
+  padding: .5rem 0 1.2rem;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.workspace-hero-copy {
+  max-width: 58rem;
+}
+
+.workspace-eyebrow {
+  color: var(--teal-700);
+  font-size: .65rem;
+  letter-spacing: .14em;
+}
+
+.eyebrow-pulse {
+  width: .42rem;
+  height: .42rem;
+  background: var(--teal-500);
+  box-shadow: none;
+}
+
+.workspace-hero h2 {
+  max-width: 24ch;
+  margin: .65rem 0 .45rem;
+  color: var(--text-bright);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+
+.workspace-hero-copy p {
+  max-width: 48rem;
+  color: var(--text-muted);
+  font-size: .98rem;
+  line-height: 1.55;
+}
+
+.workspace-hero-stats,
+.hero-contour {
+  display: none;
+}
+
+.workspace-layout {
+  gap: 1.25rem;
+}
+
+.workspace-layout > main {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .workspace-hero {
+    padding: .25rem 0 1rem;
+  }
+
+  .workspace-hero h2 {
+    font-size: clamp(1.9rem, 6vw, 2.7rem);
+  }
+}
+
+/* Restyle the existing intro without changing its skip or timing behaviour. */
+.intro-splash {
+  color: var(--text-bright);
+  background: var(--twilight-bg);
+}
+
+.intro-mark {
+  border-color: rgba(29, 42, 62, .16);
+  background: var(--twilight-surface);
+  box-shadow: 0 18px 50px rgba(29, 42, 62, .08);
+}
+
+.intro-m,
+.intro-wave,
+.intro-rain {
+  stroke: var(--teal-500);
+}
+
+.intro-wave {
+  stroke: var(--steel-500);
+}
+
+.intro-kicker,
+.intro-subtitle {
+  color: var(--text-muted);
+}
+
+.intro-title span {
+  color: var(--teal-600);
+}
+
+.intro-skip {
+  border-color: var(--twilight-border);
+  color: var(--text-main);
+  background: var(--twilight-surface);
+}
+
+.intro-skip:hover {
+  border-color: var(--teal-500);
+  background: var(--teal-50);
+}
+
+.intro-skip span {
+  color: var(--teal-700);
+}
+
+.intro-progress {
+  background: linear-gradient(90deg, var(--steel-500), var(--teal-500));
+}
+
+/* Keep scenario and trust states legible on the light surfaces. */
+.text-red-200,
+.text-red-300 {
+  color: #9B3434;
+}
+
+.text-amber-300,
+.text-amber-400 {
+  color: #8A5A13;
+}
+/* Scenario Lab — Warm Chalk / Terracotta */
+.scenario-lab {
+  color: #29364A;
+  gap: 1.25rem;
+}
+.scenario-lab > div {
+  border-color: #DED6C9;
+  box-shadow: 0 2px 8px rgba(54, 43, 31, 0.035);
+}
+.scenario-lab label {
+  color: #5A4634;
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.035em;
+}
+.scenario-lab select,
+.scenario-lab input {
+  border-color: #DED6C9;
+  background-color: #FFFEFA;
+  color: #29364A;
+  border-radius: 0.55rem;
+}
+.scenario-lab select:focus,
+.scenario-lab input:focus {
+  border-color: #A66A45;
+  outline: 2px solid rgba(166, 106, 69, 0.15);
+  outline-offset: 1px;
+}
+.scenario-lab button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.scenario-lab canvas {
+  display: block;
+}
+.scenario-lab figure {
+  border-color: #DED6C9;
+  background: #FFFEFA;
+  box-shadow: none;
+}
+.scenario-lab figure > div {
+  border-color: #DED6C9;
+  background: #F7F5EF;
+}
+.scenario-lab table th {
+  color: #5A4634;
+  font-weight: 650;
+}
+.scenario-lab table td {
+  font-variant-numeric: tabular-nums;
+}
+/* Scenario controls refinement */
+.scenario-controls {
+  border: 1px solid #DED6C9;
+  border-radius: 0.85rem;
+  background: #FFFEFA;
+  box-shadow: 0 3px 12px rgba(54, 43, 31, 0.045);
+}
+.scenario-controls h2 {
+  color: #1D2A3E;
+  letter-spacing: -0.025em;
+}
+.scenario-controls .cardHeader {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #EBE5DA;
+  margin-bottom: 1.1rem;
+}
+.scenario-controls .badge-accent,
+.scenario-controls button {
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.scenario-actions {
+  border-color: #EBE5DA;
+}
+.scenario-actions button:focus-visible,
+.scenario-lab button:focus-visible {
+  outline: 2px solid #A66A45;
+  outline-offset: 3px;
+}
+.scenario-lab figure figcaption {
+  color: #29364A;
+  letter-spacing: 0.01em;
+}
+/* Scenario comparison refinement */
+.scenario-comparison {
+  border: 1px solid #DED6C9;
+  border-radius: 0.85rem;
+  background: #FFFEFA;
+  box-shadow: 0 3px 12px rgba(54, 43, 31, 0.035);
+}
+.scenario-comparison > div:first-child {
+  align-items: center;
+  gap: 0.85rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid #EBE5DA;
+}
+.scenario-day-selector {
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border: 1px solid #DED6C9;
+  border-radius: 0.65rem;
+  background: #F7F5EF;
+}
+.scenario-day-selector button {
+  min-width: 2.45rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  transition: background 140ms ease, color 140ms ease;
+}
+.scenario-day-selector .scenario-day-active {
+  color: #FFFEFA;
+  background: #A66A45;
+  box-shadow: 0 1px 2px rgba(54, 43, 31, 0.12);
+}
+.scenario-day-selector .scenario-day-idle {
+  color: #5A4634;
+  background: transparent;
+}
+.scenario-day-selector .scenario-day-idle:hover {
+  color: #75472F;
+  background: #E9DFC9;
+}
+.scenario-comparison .grid {
+  align-items: start;
+}
+.scenario-comparison figure {
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .scenario-comparison > div:first-child {
+    align-items: flex-start;
+  }
+  .scenario-day-selector {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .scenario-day-selector button {
+    min-width: 0;
+    flex: 1;
+    padding-inline: 0.25rem;
+  }
+}.workspace-layout { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 1.5rem !important; }
+.workspace-layout > aside { min-width: 0; }
+.workspace-settings { border: 1px solid var(--twilight-border); border-radius: 12px; background: var(--surface-paper); overflow: hidden; }
+.workspace-settings > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; color: var(--text-main); font-size: 12px; font-weight: 700; cursor: pointer; list-style: none; }
+.workspace-settings > summary::-webkit-details-marker { display: none; }
+.workspace-settings > summary span { color: var(--text-muted); font-size: 11px; font-weight: 500; }
+.workspace-settings[open] > summary { border-bottom: 1px solid var(--twilight-border); }
+.workspace-settings > aside { padding: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); align-items: start; gap: 12px; }
+.workspace-hero { padding: 0 0 .65rem !important; margin-bottom: 1rem !important; }
+.workspace-hero h2 { margin-top: .3rem !important; font-size: clamp(1.7rem, 3vw, 2.4rem) !important; }
+.workspace-hero-copy p { font-size: .88rem !important; }
+@media (max-width: 640px) { .workspace-settings > aside { grid-template-columns: 1fr; } }
+
+ /* Forecast workspace compact desktop layout */
+.workspace-hero {
+  min-height: 0 !important;
+  gap: 1rem !important;
+}
+.workspace-hero h2 {
+  font-size: clamp(1.45rem, 2.4vw, 2rem) !important;
+  line-height: 1.12 !important;
+}
+.workspace-hero-copy p {
+  font-size: .78rem !important;
+  line-height: 1.4 !important;
+}
+.workspace-hero-stats {
+  min-width: 12rem !important;
+  gap: .4rem !important;
+}
+.hero-stat {
+  min-height: 3.2rem !important;
+  padding: .45rem .65rem !important;
+}
+.hero-stat-grid {
+  min-height: 2.8rem !important;
+}
+.forecast-workspace {
+  gap: .85rem !important;
+}
+.forecast-workspace > div {
+  min-width: 0;
+}
+.forecast-workspace figure > div {
+  background: #F7F5EF;
+}
+.forecast-workspace button:focus-visible {
+  outline: 2px solid #A66A45;
+  outline-offset: 2px;
+}
+@media (min-width: 901px) {
+  .forecast-workspace figure {
+    max-width: 100%;
+  }
+}
+@media (max-width: 640px) {
+  .workspace-hero-stats {
+    width: 100%;
+  }
+}
