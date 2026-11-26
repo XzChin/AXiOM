@@ -1,0 +1,178 @@
+**********************
+Windows PowerShell transcript start
+Start time: 20261126233918
+Username: LAPTOP-KTNNT7R6\alway
+RunAs User: LAPTOP-KTNNT7R6\alway
+Configuration Name:
+Machine: LAPTOP-KTNNT7R6 (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\alway\AppData\Local\Programs\Microsoft VS Code\661626d0e7\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 8068
+PSVersion: 5.1.26100.9818
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9818
+BuildVersion: 10.0.26100.9818
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\AXIOM\axiom_fast_audit.txt
+
+========== AXIOM FAST AUDIT ==========
+
+
+
+
+
+
+
+FULL TEST EXIT CODE: 0
+Path
+----
+C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\AXIOM
+True
+
+PSPath            : Microsoft.PowerShell.Core\FileSystem::C:\Users\alway\One
+                    Drive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\s
+                    ite-packages\monsoon_r1\template
+PSParentPath      : Microsoft.PowerShell.Core\FileSystem::C:\Users\alway\One
+                    Drive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\s
+                    ite-packages\monsoon_r1
+PSChildName       : template
+PSDrive           : C
+PSProvider        : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer     : True
+Name              : template
+FullName          : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-m
+                    onsoon\.venv\Lib\site-packages\monsoon_r1\template
+Parent            : monsoon_r1
+Exists            : True
+Root              : C:\
+Extension         :
+CreationTime      : 26-11-2026 13:06:09
+CreationTimeUtc   : 26-11-2026 07:36:09
+LastAccessTime    : 26-11-2026 13:06:09
+LastAccessTimeUtc : 26-11-2026 07:36:09
+LastWriteTime     : 26-11-2026 13:06:09
+LastWriteTimeUtc  : 26-11-2026 07:36:09
+Attributes        : Directory
+Mode              : d-----
+BaseName          : template
+Target            : {}
+LinkType          :
+
+
+PSPath            : Microsoft.PowerShell.Core\FileSystem::C:\Users\alway\One
+                    Drive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\s
+                    ite-packages\monsoon_r1\__pycache__
+PSParentPath      : Microsoft.PowerShell.Core\FileSystem::C:\Users\alway\One
+                    Drive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\s
+                    ite-packages\monsoon_r1
+PSChildName       : __pycache__
+PSDrive           : C
+PSProvider        : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer     : True
+Name              : __pycache__
+FullName          : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-m
+                    onsoon\.venv\Lib\site-packages\monsoon_r1\__pycache__
+Parent            : monsoon_r1
+Exists            : True
+Root              : C:\
+Extension         :
+CreationTime      : 26-11-2026 13:06:09
+CreationTimeUtc   : 26-11-2026 07:36:09
+LastAccessTime    : 26-11-2026 13:06:09
+LastAccessTimeUtc : 26-11-2026 07:36:09
+LastWriteTime     : 26-11-2026 13:06:09
+LastWriteTimeUtc  : 26-11-2026 07:36:09
+Attributes        : Directory
+Mode              : d-----
+BaseName          : __pycache__
+Target            : {}
+LinkType          :
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 11417
+Name          : build_dataset.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 5351
+Name          : client.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 2925
+Name          : contract.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 8360
+Name          : repo_scan.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 1968
+Name          : schema_validator.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 9870
+Name          : scoring.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 1871
+Name          : stats.py
+
+
+LastWriteTime : 26-11-2026 13:06:09
+Length        : 0
+Name          : __init__.py
+
+
+Algorithm : SHA256
+Hash      : 91A7707E85B3F433716FCB7A98D72A2DD944412CFDA424F209B5B5FE8AACB195
+Path      : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\A
+            XIOM\weights\model.npz
+
+{
+ "train_years": "2005-2017",
+ "validation_years": "2018-2019 (used for choices)",
+ "test_years": "2020-2021 (scored once)",
+ "iters": 16000,
+ "rollout": "2:600:3e-4,4:800:2e-4,8:900:1.2e-4,12:500:8e-5",
+ "width": 128,
+ "seed": 0,
+ "rain_scale": 1.3,
+ "rain_anomaly_clip": 1.9,
+ "data_start": "2005-01-01"
+}
+Candidate output path is clear
+
+
+
+
+
+TotalRAM_GB : 15.73
+FreeRAM_GB  : 2.77
+
+
+
+
+
+
+
+Name FreeGB UsedGB
+---- ------ ------
+C     13.83 193.19
+
+Candidate experiments directory does not exist yet
+
+========== AUDIT COMPLETE ==========
+Full test exit code: 0
+**********************
+Windows PowerShell transcript end
+End time: 20261126233937
+**********************

@@ -1,5 +1,6 @@
 """python -m dashboard_server.app   ->  http://127.0.0.1:8080  (needs the graded server on port 8000)"""
-from pydantic import BaseModel
+from typing import Literal
+from pydantic import BaseModel, Field, model_validator
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.staticfiles import StaticFiles
@@ -9,45 +10,75 @@ from dashboard_server import analysis, core
 app = FastAPI()
 
 
+VALID_REGIONS = Literal[
+    "all_india",
+    "western_ghats",
+    "central_monsoon",
+    "indo_gangetic",
+    "northeast",
+    "bay_of_bengal",
+    "arabian_sea",
+]
+
+
+
+class ShockReq(BaseModel):
+    init_states: list
+    doy_sincos: list[float]
+    scenario: Literal["warm_ocean", "monsoon_stall", "zero", "custom"] = "warm_ocean"
+    channel: int | None = Field(default=None, ge=0, le=5)
+    center_lat: float = Field(default=15.0, ge=6.5, le=37.5)
+    center_lon: float = Field(default=88.0, ge=65.5, le=100.5)
+    radius: float = Field(default=3.0, gt=0, le=20)
+    amplitude: float = Field(default=2.5, ge=-100000, le=100000)
+    steps: int = Field(default=10, ge=1, le=30)
+
+
 class CertificateReq(BaseModel):
     init_states: list
     doy_sincos: list[float]
     perturbation: list
-    steps: int = 10
+    steps: int = Field(default=10, ge=1, le=30)
 
 
 class EnsembleReq(BaseModel):
     init_states: list
     doy_sincos: list[float]
-    steps: int = 10
-    members: int = 5
-    noise_scale: float = 0.05
+    steps: int = Field(default=10, ge=1, le=30)
+    members: int = Field(default=5, ge=3, le=9)
+    noise_scale: float = Field(default=0.05, ge=0.0, le=1.0)
 
 
 class SensitivityReq(BaseModel):
     init_states: list
     doy_sincos: list[float]
-    target_channel: int = 1
-    target_day: int = 4
-    region_id: str = "central_monsoon"
+    target_channel: int = Field(default=1, ge=0, le=5)
+    target_day: int = Field(default=4, ge=1, le=30)
+    region_id: VALID_REGIONS = "central_monsoon"
 
 
 class ReverseReq(BaseModel):
     init_states: list
     doy_sincos: list[float]
-    target_region: str = "central_monsoon"
-    target_day: int = 5
-    target_channel: int = 1
-    direction: str = "increase"
+    target_region: VALID_REGIONS = "central_monsoon"
+    target_day: int = Field(default=5, ge=1, le=30)
+    target_channel: int = Field(default=1, ge=0, le=5)
+    direction: Literal["increase", "decrease"] = "increase"
 
 
 class MemoryReq(BaseModel):
     init_states: list
     doy_sincos: list[float]
     perturbation: list
-    recovery_day: int = 3
-    total_days: int = 10
-    comp_scale: float = 1.0
+    recovery_day: int = Field(default=3, ge=1, le=29)
+    total_days: int = Field(default=10, ge=2, le=30)
+    comp_scale: float = Field(default=1.0, ge=0.0, le=3.0)
+
+    @model_validator(mode="after")
+    def validate_recovery_day(self):
+        if self.recovery_day >= self.total_days:
+            raise ValueError("recovery_day must be less than total_days")
+        return self
 
 
 @app.post("/api/model/{route}")
@@ -73,6 +104,20 @@ def sample_windows():
 def window(date: str):
     try:
         return core.window(date)
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from None
+
+
+
+@app.post("/api/analysis/shock")
+def api_shock(req: ShockReq):
+    from dashboard_server import shock_engine
+    try:
+        return shock_engine.run_shock(
+            req.init_states, req.doy_sincos, req.scenario,
+            req.channel, req.center_lat, req.center_lon,
+            req.radius, req.amplitude, req.steps,
+        )
     except ValueError as e:
         raise HTTPException(422, str(e)) from None
 
@@ -116,6 +161,59 @@ def api_memory(req: MemoryReq):
     except ValueError as e:
         raise HTTPException(422, str(e)) from None
 
+
+
+
+@app.post("/api/atmosphere/explore")
+def atmosphere_explore(payload: dict):
+    from dashboard_server import atmosphere_engine
+    try:
+        if "state" not in payload:
+            raise ValueError("state is required.")
+        return atmosphere_engine.run_explorer(
+            payload["state"],
+            payload.get("rollout"),
+            payload.get("shocked_state"),
+            payload.get("shocked_rollout"),
+        )
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from None
+
+
+@app.post("/api/timeline/forecast")
+def timeline_forecast(payload: dict):
+    from dashboard_server import timeline_engine
+    try:
+        return timeline_engine.run_forecast(
+            payload.get("date"), payload.get("steps", 10)
+        )
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from None
+
+
+@app.post("/api/timeline/cell-series")
+def timeline_cell_series(payload: dict):
+    from dashboard_server import timeline_engine
+    try:
+        return timeline_engine.run_cell_series(
+            payload.get("date"),
+            payload.get("lat_index"),
+            payload.get("lon_index"),
+            payload.get("steps", 10),
+        )
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from None
+
+
+@app.post("/api/timeline/hindcast")
+def timeline_hindcast(payload: dict):
+    from dashboard_server import timeline_engine
+    try:
+        return timeline_engine.run_hindcast(
+            payload.get("date"), payload.get("steps", 10)
+        )
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from None
 
 app.mount("/", StaticFiles(directory=core.ROOT / "frontend" / "dist", html=True))
 

@@ -1,0 +1,50 @@
+=== PYTHON 3.14 ===
+Python 3.14.3
+pip 25.3 from C:\Users\alway\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+
+=== PYTHON 3.12 ===
+Python 3.12.10
+pip 25.0.1 from C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\site-packages\pip (python 3.12)
+
+=== REQUIREMENTS ===
+-r runtime.txt
+scipy==1.18.1
+xarray
+netCDF4
+numpy==2.4.6
+pydantic==2.14.4
+fastapi==0.165.0
+uvicorn==0.54.0
+-r train.txt
+pytest==9.2.0
+requests==2.34.2
+=== PYTHON DEPENDENCY IMPORT CHECK ===
+py : Traceback (most recent call last):
+At line:17 char:1
++ py -3.14 -c "import numpy, scipy, pytest; print('numpy',numpy.__versi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call la
+   st)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  File "<string>", line 1, in <module>
+    import numpy, scipy, pytest; print('numpy',numpy.__version__);
+print('scipy',scipy.__version__); print('pytest',pytest.__version__)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'numpy'
+=== MEMORY ===
+
+
+TotalRAM_GB : 15.73
+FreeRAM_GB  : 2.95
+
+
+
+=== DATASET CHECK ===
+=== BASELINE CHECK ===
+
+
+Algorithm : SHA256
+Hash      : 91A7707E85B3F433716FCB7A98D72A2DD944412CFDA424F209B5B5FE8AACB195
+Path      : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\A
+            XIOM\weights\model.npz

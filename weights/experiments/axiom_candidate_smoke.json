@@ -1,0 +1,8 @@
+{
+ "train_end": 2017,
+ "iters": 2,
+ "rollout": "2:2:0.00001",
+ "width": 128,
+ "seed": 0,
+ "data_start": "2005-01-01"
+}

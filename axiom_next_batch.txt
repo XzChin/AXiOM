@@ -1,0 +1,427 @@
+**********************
+Windows PowerShell transcript start
+Start time: 20261126234024
+Username: LAPTOP-KTNNT7R6\alway
+RunAs User: LAPTOP-KTNNT7R6\alway
+Configuration Name:
+Machine: LAPTOP-KTNNT7R6 (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\alway\AppData\Local\Programs\Microsoft VS Code\661626d0e7\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 8068
+PSVersion: 5.1.26100.9818
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9818
+BuildVersion: 10.0.26100.9818
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is axiom_next_batch.txt
+===== AXIOM NEXT BATCH =====
+
+
+
+
+Path
+----
+C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\AXIOM
+
+IgnoreCase : True
+LineNumber : 22
+Line       : def prepare(path, train_end):
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 269
+Line       : def fit(net, z, doy, years, train_end, iters_a, stage_b,
+             seed=0, stage_c_iters=0, stage_d_iters=0):
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 312
+Line       :     ap.add_argument("--data", required=True)
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 313
+Line       :     ap.add_argument("--out", default=str(ROOT /
+             "weights/model.npz"))
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 314
+Line       :     ap.add_argument("--train-end", type=int, default=2017)
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 315
+Line       :     ap.add_argument("--iters", type=int, default=12000)
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 316
+Line       :     ap.add_argument("--rollout",
+             default="2:500:3e-4,4:500:2e-4,8:400:1e-4",
+             help="horizon:iterations:lr,...")
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 317
+Line       :     ap.add_argument("--stage-c", type=int, default=0,
+             help="Stage C sharpness/heavy-rain iterations")
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 318
+Line       :     ap.add_argument("--stage-d", type=int, default=0,
+             help="Stage D shock fine-tune iterations")
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 319
+Line       :     ap.add_argument("--width", type=int, default=128)
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 320
+Line       :     ap.add_argument("--seed", type=int, default=0)
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 328
+Line       :     np.savez_compressed(args.out, **net.a)
+Filename   : train.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\training\train.py
+Pattern    : def main|add_argument|def prepare|def fit|np.savez
+Context    :
+Matches    : {0}
+
+"""Read the kit NetCDF4 file. Uses xarray when installed; otherwise calls the system libhdf5 through ctypes."""
+import ctypes as C
+import ctypes.util
+import numpy as np
+
+
+def _read_ctypes(path, names):
+    lib = C.CDLL(ctypes.util.find_library("hdf5_serial") or ctypes.util.find_library("hdf5"))
+    hid = C.c_int64
+    lib.H5open()
+    lib.H5Fopen.restype = hid; lib.H5Fopen.argtypes = [C.c_char_p, C.c_uint, hid]
+    lib.H5Dopen2.restype = hid; lib.H5Dopen2.argtypes = [hid, C.c_char_p, hid]
+    lib.H5Dget_space.restype = hid; lib.H5Dget_space.argtypes = [hid]
+    lib.H5Sget_simple_extent_ndims.argtypes = [hid]
+    lib.H5Sget_simple_extent_dims.argtypes = [hid, C.c_void_p, C.c_void_p]
+    lib.H5Dread.argtypes = [hid, hid, hid, hid, hid, C.c_void_p]
+    lib.H5Dclose.argtypes = [hid]; lib.H5Fclose.argtypes = [hid]
+    f32 = hid.in_dll(lib, "H5T_NATIVE_FLOAT_g").value
+    f = lib.H5Fopen(str(path).encode(), 0, 0)
+    if f < 0:
+        raise OSError(f"cannot open {path}")
+    out = {}
+    for n in names:
+        d = lib.H5Dopen2(f, n.encode(), 0)
+        if d < 0:
+            raise KeyError(n)
+        s = lib.H5Dget_space(d)
+        nd = lib.H5Sget_simple_extent_ndims(s)
+        dims = (C.c_uint64 * nd)()
+        lib.H5Sget_simple_extent_dims(s, dims, None)
+        a = np.empty(tuple(dims), np.float32)
+        if lib.H5Dread(d, f32, 0, 0, 0, a.ctypes.data_as(C.c_void_p)) < 0:
+            raise OSError(f"read failed: {n}")
+        out[n] = a
+        lib.H5Dclose(d)
+    lib.H5Fclose(f)
+    return out
+
+
+def load(path):
+    """Return (data [N,6,32,36], static [2,32,36], time float array, lat, lon)."""
+    try:
+        import xarray as xr
+    except ImportError:
+        r = _read_ctypes(path, ["data", "static", "time", "lat", "lon"])
+        return r["data"], r["static"], r["time"], r["lat"], r["lon"]
+    with xr.open_dataset(path, decode_times=False) as ds:
+        return tuple(np.asarray(ds[n].values, np.float32) for n in ["data", "static", "time", "lat", "lon"])
+
+IgnoreCase : True
+LineNumber : 5
+Line       : 2. Offline synthetic 5-archetype + 3-shock certificate
+             verification when no NetCDF archive is mounted.
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 9
+Line       : import argparse
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 143
+Line       : def _synthetic_archetypes() -> list[tuple[str, int,
+             np.ndarray]]:
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 144
+Line       :     """Five synthetic India-like weather archetypes for
+             offline smoke grading when .nc is absent."""
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 164
+Line       : def run_synthetic_audit(net: Net) -> dict:
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 166
+Line       :     archetypes = _synthetic_archetypes()
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 176
+Line       :         "mode": "synthetic_smoke",
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 183
+Line       : def main() -> int:
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 184
+Line       :     ap = argparse.ArgumentParser()
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 185
+Line       :     ap.add_argument("--data", help="Path to
+             india_climate_train.nc (optional)")
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 186
+Line       :     ap.add_argument("--weights", default=str(ROOT / "weights"
+             / "model.npz"))
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 187
+Line       :     ap.add_argument("--years", type=int, nargs="+",
+             default=[2018, 2019])
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 188
+Line       :     ap.add_argument("--clim-end", type=int, default=2017)
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 189
+Line       :     ap.add_argument("--stride", type=int, default=5)
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 190
+Line       :     ap.add_argument("--out")
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+
+IgnoreCase : True
+LineNumber : 195
+Line       :         res = run_synthetic_audit(net)
+Filename   : local_grader.py
+Path       : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\
+             AXIOM\evaluation\local_grader.py
+Pattern    : synthetic|def main|argparse|add_argument
+Context    :
+Matches    : {0}
+
+{
+ "train_years": "2005-2017",
+ "validation_years": "2018-2019 (used for choices)",
+ "test_years": "2020-2021 (scored once)",
+ "iters": 16000,
+ "rollout": "2:600:3e-4,4:800:2e-4,8:900:1.2e-4,12:500:8e-5",
+ "width": 128,
+ "seed": 0,
+ "rain_scale": 1.3,
+ "rain_anomaly_clip": 1.9,
+ "data_start": "2005-01-01"
+}
+Dataset destination: C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\AXIOM\data\official
+DATASET NOT TRANSFERRED
+
+
+
+
+TotalRAM_GB : 15.73
+FreeRAM_GB  : 2.77
+
+
+
+Candidate output is available
+
+
+
+===== BATCH COMPLETE =====
+**********************
+Windows PowerShell transcript end
+End time: 20261126234025
+**********************

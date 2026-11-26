@@ -51,6 +51,20 @@ def _region_mask(region_id: str, land_mask: Optional[np.ndarray] = None, land_on
 
 
 def _gaussian_shock(ch: int, clat: float, clon: float, radius: float, amp: float) -> np.ndarray:
+    if isinstance(ch, (bool, np.bool_)) or not isinstance(ch, (int, np.integer)) or not 0 <= int(ch) < NC:
+        raise ValueError("Shock channel must be an integer from 0 to 5.")
+
+    try:
+        clat, clon, radius, amp = map(float, (clat, clon, radius, amp))
+    except (TypeError, ValueError):
+        raise ValueError("Gaussian shock parameters must be finite numbers.") from None
+
+    if not np.isfinite([clat, clon, radius, amp]).all():
+        raise ValueError("Gaussian shock parameters must be finite numbers.")
+    if radius <= 0:
+        raise ValueError("Gaussian shock radius must be greater than zero.")
+
+    ch = int(ch)
     d = np.zeros((NC, NLAT, NLON), dtype=np.float32)
     dist = np.hypot(LAT[:, None] - clat, LON[None, :] - clon)
     mask = dist <= 2.0 * radius
@@ -134,7 +148,12 @@ def run_certificate(init_states: Any, doy_sincos: list[float], perturbation: Any
         {"id": "determinism", "name": "Deterministic repeatability", "passed": repeat_diff == 0.0, "detail": f"max |run1 - run2| = {repeat_diff:.3e}"},
     ]
     total_inference_ms = ms_base + ms_zero + ms_shock1 + ms_shock2 + ms_half
-    return {"checks": checks, "passed_count": sum(1 for c in checks if c["passed"]), "total_checks": 8, "inference_ms": total_inference_ms}
+    return {
+        "checks": checks,
+        "passed_count": sum(1 for c in checks if c["passed"]),
+        "total_checks": 8,
+        "inference_ms": total_inference_ms,
+    }
 
 
 def run_ensemble(init_states: Any, doy_sincos: list[float], steps: int = 10, members: int = 5, noise_scale: float = 0.05) -> dict:

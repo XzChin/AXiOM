@@ -114,6 +114,14 @@ def scatter(GT, g, B, k):
     return np.stack([GT @ g[b * N:(b + 1) * N].reshape(N * k, NC) for b in range(B)])
 
 
+def paired_shock_penalty(delta, weight, horizon, threshold=4.0):
+    """Mean squared hinge penalty and d(loss)/d(delta)."""
+    over = np.maximum(np.abs(delta) - threshold, 0.0) * np.sign(delta)
+    loss = weight * float(np.mean(over * over)) / horizon
+    grad = (2.0 * weight * over / (over.size * horizon)).astype(np.float32)
+    return loss, grad
+
+
 def rollout_train_step(
     net,
     opt,
@@ -163,6 +171,7 @@ def rollout_train_step(
         caches.append((cache, out))
 
     # Stage D paired shock stability/boundedness penalty
+    s_dloss = []
     if shock_weight > 0 and rng is not None:
         shock = np.zeros_like(states[2])
         ci = rng.integers(0, NC)
@@ -171,36 +180,88 @@ def rollout_train_step(
         mask = (np.exp(-((ii - cy) ** 2 + (jj - cx) ** 2) / (2 * 2.5 ** 2))).reshape(N)
         shock[:, :, ci] = rng.choice([-1.0, 1.0]) * 1.5 * mask[None, :]
         s_states = [states[0], states[1], states[2] + shock]
-        s_caches, s_dloss = [], []
+        s_caches = []
         for k in range(horizon):
             sx = net.features(s_states[k], s_states[k + 1], s_states[k + 2], doy[t0 + k])
             sout, scache = net.forward(sx, keep=True)
             snxt = s_states[k + 2] + sout.reshape(B, N, NC) * ratio + shift
             s_states.append(snxt)
             delta = snxt - states[k + 3]
-            over = np.maximum(np.abs(delta) - 4.0, 0.0) * np.sign(delta)
-            total += shock_weight * float((over * over).mean()) / horizon
-            s_dloss.append(shock_weight * over / (over.size * horizon))
+            penalty, ddelta = paired_shock_penalty(delta, shock_weight, horizon)
+            total += penalty
+            s_dloss.append(ddelta)
             s_caches.append((scache, sout))
 
     grads = {k: np.zeros_like(v) for k, v in opt.p.items()}
+    o = 150
+
+    # First backpropagate the shocked branch. Its first three states
+    # are shared with the baseline branch and must pass gradients back.
+    shared_initial_adj = [np.zeros_like(states[0]) for _ in range(3)]
+
+    if s_dloss:
+        s_adj = [np.zeros_like(s_states[0]) for _ in s_states]
+
+        for k in range(horizon - 1, -1, -1):
+            s_adj[k + 3] += s_dloss[k]
+            ga = s_adj[k + 3]
+            s_adj[k + 2] += ga
+
+            scache, sout = s_caches[k]
+            sgx = backward(
+                net, scache, sout,
+                (ga * ratio).reshape(B * N, NC).astype(np.float32),
+                grads, True
+            )
+
+            sgp = scatter(G5T, sgx[:, :o], B, 25)
+            sgd1 = scatter(G3T, sgx[:, o:o + 54], B, 9)
+            sgd0 = sgx[:, o + 54:o + 60].reshape(B, N, NC)
+            sgw = sgx[:, o + 66].reshape(B, N)
+
+            s_adj[k + 2] += sgp + sgd1
+            s_adj[k + 2][..., 2] += sgw * net.static[:, 2]
+            s_adj[k + 2][..., 3] += sgw * net.static[:, 3]
+            s_adj[k + 1] += sgd0 - sgd1
+            s_adj[k] -= sgd0
+
+        for k in range(3):
+            shared_initial_adj[k] += s_adj[k]
+
+    # Then backpropagate the baseline branch. The paired objective
+    # contributes -dL/d(delta) to each baseline forecast state.
     adj = [np.zeros_like(states[0]) for _ in states]
+
+    for k in range(3):
+        adj[k] += shared_initial_adj[k]
+
     for k in range(horizon - 1, -1, -1):
         adj[k + 3] += dloss[k]
+
+        if s_dloss:
+            adj[k + 3] -= s_dloss[k]
+
         ga = adj[k + 3]
         adj[k + 2] += ga
+
         cache, out = caches[k]
-        gx = backward(net, cache, out, (ga * ratio).reshape(B * N, NC).astype(np.float32), grads, True)
-        o = 150
+        gx = backward(
+            net, cache, out,
+            (ga * ratio).reshape(B * N, NC).astype(np.float32),
+            grads, True
+        )
+
         gp = scatter(G5T, gx[:, :o], B, 25)
         gd1 = scatter(G3T, gx[:, o:o + 54], B, 9)
         gd0 = gx[:, o + 54:o + 60].reshape(B, N, NC)
         gw = gx[:, o + 66].reshape(B, N)
+
         adj[k + 2] += gp + gd1
         adj[k + 2][..., 2] += gw * net.static[:, 2]
         adj[k + 2][..., 3] += gw * net.static[:, 3]
         adj[k + 1] += gd0 - gd1
         adj[k] -= gd0
+
     opt.step(grads, lr)
     return float(total)
 

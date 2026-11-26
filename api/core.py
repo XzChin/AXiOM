@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from monsoon.model import Net  # noqa: E402
 
 MODEL_NAME = "monsoonnet-lite-numpy-1.0"
-MAX_STEPS = 30
+MAX_STEPS = 14
 
 
 class SimulateRequest(BaseModel):
