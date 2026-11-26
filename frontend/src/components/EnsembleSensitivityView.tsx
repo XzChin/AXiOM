@@ -3,6 +3,7 @@ import { EnsembleResult, SensResult, Window_, runEnsemble, runSensitivity } from
 import { GridMap } from "./GridMap";
 import { CHANNELS, Grid, State, display, maxAbs } from "../utils/science";
 import { REGIONS, RegionId } from "../utils/india";
+import { ui } from "../theme";
 
 interface Props {
   win: Window_ | null;
@@ -10,10 +11,6 @@ interface Props {
   task: (name: string, fn: () => Promise<void>) => Promise<void>;
   busy: string;
 }
-
-const card = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
-const btnPrimary = "rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-sky-800 disabled:opacity-40 transition";
-const input = "w-full rounded-lg border border-slate-300 bg-white p-2 text-xs text-slate-800 shadow-sm";
 
 export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
   // Ensemble state
@@ -52,34 +49,34 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
     const rangeMean: [number, number] = [Math.min(...flat), Math.max(...flat)];
     const spreadMax = maxAbs(spreadGrid) || 1;
     return [
-      { title: `Ensemble Mean (Day +${ensDay}) [${CHANNELS[ensCh].label}]`, grid: meanGrid, range: rangeMean, diverging: false },
-      { title: `Ensemble Spread / Uncertainty σ (Day +${ensDay})`, grid: spreadGrid, range: [0, spreadMax] as [number, number], diverging: false },
+      { title: `Ensemble Mean (Day +${ensDay}) [${CHANNELS[ensCh].label}] [Derived]`, grid: meanGrid, range: rangeMean, diverging: false },
+      { title: `Ensemble Spread / Uncertainty σ (Day +${ensDay}) [Derived]`, grid: spreadGrid, range: [0, spreadMax] as [number, number], diverging: false },
     ];
   })();
 
   return (
     <div className="space-y-6">
       {/* SECTION 1: Ensemble Futures */}
-      <div className={card}>
-        <div className="mb-3 flex flex-wrap items-center justify-between border-b pb-2">
+      <div className={ui.card}>
+        <div className={ui.cardHeader}>
           <div>
-            <h2 className="text-base font-bold text-slate-800">
-              Ensemble Futures & Confidence Engine
+            <h2 className={ui.titleMd}>
+              Ensemble Futures &amp; Confidence Engine
             </h2>
-            <p className="text-xs text-slate-500">
-              Probabilistic ensemble generated via localized initial-condition perturbations.
+            <p className={ui.muted}>
+              Probabilistic spread simulated via bounded initial-condition perturbations.
             </p>
           </div>
-          <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
+          <span className={ui.badgeAccent}>
             PROXY ENSEMBLE (UNRELIABILITY DISCLOSED)
           </span>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-4">
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Ensemble Members (N):</label>
+        <div className="grid gap-4 sm:grid-cols-4">
+          <div className="space-y-1">
+            <label className={ui.label}>Ensemble Members (N):</label>
             <select
-              className={input}
+              className={ui.input}
               value={members}
               onChange={(e) => setMembers(+e.target.value)}
               disabled={!!busy}
@@ -89,23 +86,23 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Perturbation Scale (σ):</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Perturbation Scale (σ):</label>
             <input
               type="number"
               step="0.01"
               min="0.01"
               max="0.20"
-              className={input}
+              className={ui.input}
               value={noise}
               onChange={(e) => setNoise(+e.target.value)}
               disabled={!!busy}
             />
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Day:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Day:</label>
             <select
-              className={input}
+              className={ui.input}
               value={ensDay}
               onChange={(e) => setEnsDay(+e.target.value)}
             >
@@ -114,10 +111,10 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Variable:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Variable:</label>
             <select
-              className={input}
+              className={ui.input}
               value={ensCh}
               onChange={(e) => setEnsCh(+e.target.value)}
             >
@@ -128,23 +125,23 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between border-t pt-3">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
           <button
-            className={btnPrimary}
+            className={ui.btnAccent}
             disabled={!win || !!busy}
             onClick={handleRunEnsemble}
           >
             Generate {members}-Member Ensemble
           </button>
           {ensemble && (
-            <span className="text-xs text-slate-500">
-              Computed in {ensemble.inference_ms.toFixed(0)} ms.
+            <span className={`${ui.muted} tabular-nums`}>
+              Computed {members} rollouts in {ensemble.inference_ms.toFixed(0)} ms.
             </span>
           )}
         </div>
 
         {ensMaps.length > 0 && (
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
             {ensMaps.map((m) => (
               <GridMap
                 key={m.title}
@@ -158,26 +155,26 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
       </div>
 
       {/* SECTION 2: Sensitivity Atlas */}
-      <div className={card}>
-        <div className="mb-3 flex flex-wrap items-center justify-between border-b pb-2">
+      <div className={ui.card}>
+        <div className={ui.cardHeader}>
           <div>
-            <h2 className="text-base font-bold text-slate-800">
+            <h2 className={ui.titleMd}>
               Atmospheric Sensitivity Atlas
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className={ui.muted}>
               Evaluates how regional climate variables respond to cross-basin oceanic and continental anomalies.
             </p>
           </div>
-          <span className="rounded bg-sky-100 px-2 py-0.5 text-xs font-bold text-sky-800">
+          <span className={ui.badgePrimary}>
             MODEL SENSITIVITY GRADIENTS
           </span>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Target Region:</label>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="space-y-1">
+            <label className={ui.label}>Target Region:</label>
             <select
-              className={input}
+              className={ui.input}
               value={sensRegion}
               onChange={(e) => setSensRegion(e.target.value as RegionId)}
             >
@@ -186,10 +183,10 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Target Variable:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Target Variable:</label>
             <select
-              className={input}
+              className={ui.input}
               value={sensTargetCh}
               onChange={(e) => setSensTargetCh(+e.target.value)}
             >
@@ -198,10 +195,10 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Forecast Lead (Day):</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Forecast Lead (Day):</label>
             <select
-              className={input}
+              className={ui.input}
               value={sensDay}
               onChange={(e) => setSensDay(+e.target.value)}
             >
@@ -212,52 +209,54 @@ export function EnsembleSensitivityView({ win, meta, task, busy }: Props) {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between border-t pt-3">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
           <button
-            className={btnPrimary}
+            className={ui.btnPrimary}
             disabled={!win || !!busy}
             onClick={handleRunSensitivity}
           >
             Compute Regional Sensitivity
           </button>
           {sensitivity && (
-            <span className="text-xs text-slate-500">
-              Computed in {sensitivity.inference_ms.toFixed(0)} ms.
+            <span className={`${ui.muted} tabular-nums`}>
+              Computed 16 perturbation probes in {sensitivity.inference_ms.toFixed(0)} ms.
             </span>
           )}
         </div>
 
         {sensitivity && (
-          <div className="mt-4 overflow-x-auto">
-            <div className="mb-2 text-xs font-semibold text-slate-700">
-              Baseline Value in {REGIONS[sensRegion].name}: {sensitivity.baseline_mean.toFixed(2)} {CHANNELS[sensTargetCh].unit}
+          <div className="mt-5 space-y-3">
+            <div className="text-xs font-semibold text-text-bright tabular-nums">
+              Baseline Mean in {REGIONS[sensRegion].name}: {sensitivity.baseline_mean.toFixed(2)} {CHANNELS[sensTargetCh].unit}
             </div>
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-100 text-slate-600">
-                <tr>
-                  <th className="p-2">Perturbation Basin</th>
-                  <th className="p-2">Perturbed Variable</th>
-                  <th className="p-2">Probe Amplitude</th>
-                  <th className="p-2">Target Response Δ</th>
-                  <th className="p-2">Absolute Sensitivity Gradient</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {sensitivity.sensitivities.map((s, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50">
-                    <td className="p-2 font-semibold">{s.source_name}</td>
-                    <td className="p-2">{CHANNELS[s.channel].label}</td>
-                    <td className="p-2">{s.probe_amp} {CHANNELS[s.channel].unit}</td>
-                    <td className="p-2 font-semibold">
-                      <span className={s.target_delta >= 0 ? "text-emerald-700" : "text-rose-700"}>
-                        {s.target_delta > 0 ? "+" : ""}{s.target_delta} {CHANNELS[sensTargetCh].unit}
-                      </span>
-                    </td>
-                    <td className="p-2 font-bold text-sky-800">{s.abs_sensitivity.toFixed(4)}</td>
+            <div className={ui.tableWrap}>
+              <table className={ui.table}>
+                <thead className={ui.thead}>
+                  <tr>
+                    <th className="p-3">Perturbation Basin</th>
+                    <th className="p-3">Perturbed Variable</th>
+                    <th className="p-3">Probe Amplitude</th>
+                    <th className="p-3">Target Response Δ</th>
+                    <th className="p-3">Absolute Sensitivity Gradient</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className={ui.tbody}>
+                  {sensitivity.sensitivities.map((s, idx) => (
+                    <tr key={idx} className="hover:bg-twilight-hover/40 transition-colors">
+                      <td className="p-3 font-semibold text-text-bright">{s.source_name}</td>
+                      <td className="p-3 text-text-main">{CHANNELS[s.channel].label}</td>
+                      <td className="p-3 text-text-main">{s.probe_amp} {CHANNELS[s.channel].unit}</td>
+                      <td className="p-3 font-semibold">
+                        <span className={s.target_delta >= 0 ? "text-teal-300" : "text-amber-300"}>
+                          {s.target_delta > 0 ? "+" : ""}{s.target_delta} {CHANNELS[sensTargetCh].unit}
+                        </span>
+                      </td>
+                      <td className="p-3 font-bold text-teal-300">{s.abs_sensitivity.toFixed(4)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

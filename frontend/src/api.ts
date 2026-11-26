@@ -29,6 +29,8 @@ function post<T>(url: string, body: unknown): Promise<T> {
 }
 
 // ---- API calls ----
+export const checkHealth = () =>
+  post<{ status: string; model_name?: string }>("/api/model/health", {});
 export const getMeta = () => json<Meta>("/api/meta");
 export const getWindow = (d: string) => json<Window_>(`/api/window?date=${encodeURIComponent(d)}`);
 export const getSampleWindows = () => json<Window_[]>("/api/sample-windows");

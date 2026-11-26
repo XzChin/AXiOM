@@ -2,8 +2,9 @@ import { useState } from "react";
 import { MemoryResult, ReverseResult, Window_, runMemory, runReverse } from "../api";
 import { GridMap } from "./GridMap";
 import { LineChart, Series } from "./LineChart";
-import { CHANNELS, Grid, State, display, maxAbs, presetShock } from "../utils/science";
+import { CHANNELS, display, presetShock } from "../utils/science";
 import { REGIONS, RegionId } from "../utils/india";
+import { palette, ui } from "../theme";
 
 interface Props {
   win: Window_ | null;
@@ -11,10 +12,6 @@ interface Props {
   task: (name: string, fn: () => Promise<void>) => Promise<void>;
   busy: string;
 }
-
-const card = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
-const btnPrimary = "rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-sky-800 disabled:opacity-40 transition";
-const input = "w-full rounded-lg border border-slate-300 bg-white p-2 text-xs text-slate-800 shadow-sm";
 
 export function ReverseMemoryView({ win, meta, task, busy }: Props) {
   // Reverse Simulator State
@@ -50,22 +47,22 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
     const flat = [b, s].flat(2);
     const range: [number, number] = [Math.min(...flat), Math.max(...flat)];
     return [
-      { title: `Baseline Day +${revDay}`, grid: b, range, diverging: false },
-      { title: `Inverted Target Scenario Day +${revDay}`, grid: s, range, diverging: false },
+      { title: `Baseline Day +${revDay} [Model]`, grid: b, range, diverging: false },
+      { title: `Inverted Target Scenario Day +${revDay} [Model]`, grid: s, range, diverging: false },
     ];
   })();
 
   const memSeries: Series[] = memResult
     ? [
         {
-          name: "Shocked Disturbance Energy",
+          name: "Shock Disturbance Energy [Derived]",
           values: memResult.shocked_curve.map((r) => r.energy),
-          color: "#ea580c",
+          color: "#E67E22",
         },
         {
-          name: "Compensated Recovery Energy",
+          name: "Compensated Recovery Energy [Derived]",
           values: memResult.compensated_curve.map((r) => r.energy),
-          color: "#0284c7",
+          color: palette.accent,
         },
       ]
     : [];
@@ -73,26 +70,26 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
   return (
     <div className="space-y-6">
       {/* SECTION 1: Reverse Simulator ("What Would It Take?") */}
-      <div className={card}>
-        <div className="mb-3 flex flex-wrap items-center justify-between border-b pb-2">
+      <div className={ui.card}>
+        <div className={ui.cardHeader}>
           <div>
-            <h2 className="text-base font-bold text-slate-800">
-              Atmospheric Reverse Simulator ("What Would It Take?")
+            <h2 className={ui.titleMd}>
+              Atmospheric Reverse Simulator (&quot;What Would It Take?&quot;)
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className={ui.muted}>
               Inverse scenario exploration: identify bounded initial atmospheric perturbations that could achieve a specified regional outcome.
             </p>
           </div>
-          <span className="rounded bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-800">
+          <span className={ui.badgeAccent}>
             INVERSE MODEL EXPLORATION
           </span>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-4">
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Target Region:</label>
+        <div className="grid gap-4 sm:grid-cols-4">
+          <div className="space-y-1">
+            <label className={ui.label}>Target Region:</label>
             <select
-              className={input}
+              className={ui.input}
               value={revRegion}
               onChange={(e) => setRevRegion(e.target.value as RegionId)}
             >
@@ -101,10 +98,10 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Target Variable:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Target Variable:</label>
             <select
-              className={input}
+              className={ui.input}
               value={revCh}
               onChange={(e) => setRevCh(+e.target.value)}
             >
@@ -113,10 +110,10 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Goal Direction:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Goal Direction:</label>
             <select
-              className={input}
+              className={ui.input}
               value={revDir}
               onChange={(e) => setRevDir(e.target.value as any)}
             >
@@ -124,10 +121,10 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               <option value="decrease">Decrease (−) Rainfall/Value</option>
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Horizon Day:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Horizon Day:</label>
             <select
-              className={input}
+              className={ui.input}
               value={revDay}
               onChange={(e) => setRevDay(+e.target.value)}
             >
@@ -138,40 +135,40 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between border-t pt-3">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
           <button
-            className={btnPrimary}
+            className={ui.btnAccent}
             disabled={!win || !!busy}
             onClick={handleRunReverse}
           >
             Solve Optimal Shock Candidate
           </button>
           {revResult && (
-            <span className="text-xs text-slate-500">
+            <span className={`${ui.muted} tabular-nums`}>
               Evaluated {revResult.evaluations} candidate shocks in {revResult.inference_ms.toFixed(0)} ms.
             </span>
           )}
         </div>
 
         {revResult && (
-          <div className="mt-4 space-y-4">
-            <div className="rounded-lg bg-indigo-50/70 p-4 text-xs text-indigo-950">
-              <div className="font-bold">
+          <div className="mt-5 space-y-4">
+            <div className="rounded-xl border border-twilight-border bg-twilight-base p-4 text-xs text-text-main tabular-nums">
+              <div className="font-bold text-teal-300">
                 Optimal Initial Shock Found: {CHANNELS[revResult.best_candidate.channel].label} amplitude of{" "}
                 {revResult.best_candidate.amplitude > 0 ? "+" : ""}
                 {revResult.best_candidate.amplitude.toFixed(2)} {CHANNELS[revResult.best_candidate.channel].unit} at [
                 {revResult.best_candidate.lat}°N, {revResult.best_candidate.lon}°E]
               </div>
-              <div className="mt-1">
+              <div className="mt-1 text-text-muted">
                 Regional mean in {REGIONS[revRegion].name} shifted from{" "}
-                <strong>{revResult.baseline_mean.toFixed(2)}</strong> to{" "}
-                <strong>{revResult.best_candidate.achieved_mean.toFixed(2)}</strong> {CHANNELS[revCh].unit} (Δ{" "}
+                <strong className="text-text-bright">{revResult.baseline_mean.toFixed(2)}</strong> to{" "}
+                <strong className="text-teal-300">{revResult.best_candidate.achieved_mean.toFixed(2)}</strong> {CHANNELS[revCh].unit} (Δ{" "}
                 {revResult.best_candidate.delta > 0 ? "+" : ""}
                 {revResult.best_candidate.delta.toFixed(2)}).
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-5 md:grid-cols-2">
               {revMaps.map((m) => (
                 <GridMap
                   key={m.title}
@@ -186,26 +183,26 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
       </div>
 
       {/* SECTION 2: Atmospheric Memory & Recovery Lab */}
-      <div className={card}>
-        <div className="mb-3 flex flex-wrap items-center justify-between border-b pb-2">
+      <div className={ui.card}>
+        <div className={ui.cardHeader}>
           <div>
-            <h2 className="text-base font-bold text-slate-800">
-              Atmospheric Memory & Recovery Lab
+            <h2 className={ui.titleMd}>
+              Atmospheric Memory &amp; Recovery Lab
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className={ui.muted}>
               Evaluate persistence and atmospheric memory: test whether an intervening compensation can return the system to baseline trajectory.
             </p>
           </div>
-          <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
-            HYSTERESIS & RECOVERY DYNAMICS
+          <span className={ui.badgePrimary}>
+            HYSTERESIS &amp; RECOVERY DYNAMICS
           </span>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Shock Scenario:</label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label className={ui.label}>Shock Scenario:</label>
             <select
-              className={input}
+              className={ui.input}
               value={memShock}
               onChange={(e) => setMemShock(e.target.value as any)}
             >
@@ -213,10 +210,10 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               <option value="monsoon_stall">Monsoon Stall (Arabian Sea Wind Drag)</option>
             </select>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Intervention / Recovery Day:</label>
+          <div className="space-y-1">
+            <label className={ui.label}>Intervention / Recovery Day:</label>
             <select
-              className={input}
+              className={ui.input}
               value={recoveryDay}
               onChange={(e) => setRecoveryDay(+e.target.value)}
             >
@@ -227,42 +224,42 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between border-t pt-3">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
           <button
-            className={btnPrimary}
+            className={ui.btnPrimary}
             disabled={!win || !!busy}
             onClick={handleRunMemory}
           >
             Simulate 3-Branch Recovery Timeline
           </button>
           {memResult && (
-            <span className="text-xs text-slate-500">
+            <span className={`${ui.muted} tabular-nums`}>
               3-branch continuation computed in {memResult.inference_ms.toFixed(0)} ms.
             </span>
           )}
         </div>
 
         {memResult && (
-          <div className="mt-4 grid gap-5 lg:grid-cols-2">
+          <div className="mt-5 grid gap-6 lg:grid-cols-2">
             <div>
-              <h4 className="mb-2 text-xs font-bold text-slate-700">
-                Atmospheric Disturbance Energy Decay
+              <h4 className={`mb-2.5 ${ui.titleMd}`}>
+                Atmospheric Disturbance Energy Decay [Derived]
               </h4>
               <LineChart series={memSeries} unit="Normalized Energy" />
             </div>
 
-            <div className="space-y-3 text-xs text-slate-700">
-              <div className="rounded-lg bg-slate-50 p-3">
-                <span className="font-bold text-slate-900">Recovery Diagnosis:</span>
-                <p className="mt-1">
+            <div className="space-y-3.5 text-xs text-text-main">
+              <div className="rounded-xl border border-twilight-border bg-twilight-base p-4">
+                <span className="font-bold text-teal-300">Recovery Diagnosis:</span>
+                <p className="mt-1 leading-relaxed text-text-muted">
                   {memResult.time_to_return_day
                     ? `System returned within tolerance (<5% initial disturbance) by Day +${memResult.time_to_return_day}.`
                     : "Disturbance persists beyond the 10-day forecast horizon (hysteresis observed)."}
                 </p>
               </div>
-              <div className="rounded-lg bg-slate-50 p-3">
-                <span className="font-bold text-slate-900">Atmospheric Memory Definition:</span>
-                <p className="mt-1 text-slate-500">
+              <div className="rounded-xl border border-twilight-border bg-twilight-base p-4">
+                <span className="font-bold text-steel-200">Atmospheric Memory Definition:</span>
+                <p className="mt-1 leading-relaxed text-text-subtle">
                   Measures the relaxation timescale of non-linear circulation anomalies back to control climatology after an oceanic thermal or kinematic pulse.
                 </p>
               </div>
