@@ -10,9 +10,10 @@ function color(t: number, diverging: boolean): string {
   return `hsl(${k < 0 ? 215 : 15} 75% ${96 - 52 * Math.abs(k)}%)`;
 }
 
-export function GridMap({ title, grid, range, diverging, land, cell, onCell, unit, showOutline = true }: {
+export function GridMap({ title, grid, range, diverging, land, cell, onCell, unit, showOutline = true, regionBounds }: {
   title: string; grid: Grid; range: [number, number]; diverging: boolean; land: number[][];
   cell?: [number, number]; onCell?: (c: [number, number]) => void; unit: string; showOutline?: boolean;
+  regionBounds?: { lat: readonly [number, number]; lon: readonly [number, number] };
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -32,8 +33,30 @@ export function GridMap({ title, grid, range, diverging, land, cell, onCell, uni
         if (i + 1 < NLAT && a !== land[i + 1][j] > 0.5) { g.moveTo(j * S, y); g.lineTo((j + 1) * S, y); }
       }
     g.stroke();
-    // India outline overlay
-    if (showOutline && INDIA_OUTLINE.length > 2) {
+    // Show the selected geographic bounding box, or the India outline by default.
+    if (regionBounds) {
+      const [south, north] = regionBounds.lat;
+      const [west, east] = regionBounds.lon;
+      const x = (value: number) => (value - lon(0) + 0.5) * S;
+      const y = (value: number) => (lat(NLAT - 1) + 0.5 - value) * S;
+      const rx = x(west);
+      const ry = y(north);
+      const rw = x(east) - rx;
+      const rh = y(south) - ry;
+
+      // Dark outer border for contrast.
+      g.setLineDash([]);
+      g.strokeStyle = "rgba(15,23,42,0.95)";
+      g.lineWidth = 6;
+      g.strokeRect(rx, ry, rw, rh);
+
+      // Bright magenta dashed selection boundary.
+      g.strokeStyle = "#ff2d75";
+      g.lineWidth = 3;
+      g.setLineDash([9, 4]);
+      g.strokeRect(rx, ry, rw, rh);
+      g.setLineDash([]);
+    } else if (showOutline && INDIA_OUTLINE.length > 2) {
       g.strokeStyle = "rgba(255,215,0,0.7)"; g.lineWidth = 2; g.beginPath();
       INDIA_OUTLINE.forEach(([li, lj], idx) => {
         const cx = (lj + 0.5) * S, cy = (NLAT - 1 - li + 0.5) * S;
@@ -45,7 +68,7 @@ export function GridMap({ title, grid, range, diverging, land, cell, onCell, uni
     if (cell) {
       g.lineWidth = 3; g.strokeStyle = "#f59e0b"; g.strokeRect(cell[1] * S, (NLAT - 1 - cell[0]) * S, S, S);
     }
-  }, [grid, range, diverging, land, cell, showOutline]);
+  }, [grid, range, diverging, land, cell, showOutline, regionBounds]);
   return (
     <figure className="min-w-0">
       <figcaption className="mb-1 text-sm font-semibold">{title}</figcaption>

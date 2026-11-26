@@ -316,6 +316,11 @@ export function App() {
                   <label className="text-xs font-semibold text-slate-700">
                     Upload Input Window JSON:
                   </label>
+                  <p className="text-[11px] leading-relaxed text-slate-500">
+                    Requires init_states (3 frames x 6 channels x 32 x 36 values)
+                    and doy_sincos (2 numbers). A normalization stats file containing
+                    only mean/std is not an input window.
+                  </p>
                   <input
                     type="file"
                     accept=".json"

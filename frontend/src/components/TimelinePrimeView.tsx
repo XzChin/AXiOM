@@ -158,11 +158,16 @@ export function TimelinePrimeView({
               land={meta?.land_mask || []}
               cell={cell}
               onCell={setCell}
+              regionBounds={selectedRegion === "all_india" ? undefined : reg}
             />
           ))}
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t pt-2 text-xs text-slate-500">
-          <span>Gold boundary: India Geographical Outline overlay. Black line: Land-sea boundary.</span>
+          <span>
+            Selected-region boundary: {selectedRegion === "all_india"
+              ? "India geographical outline"
+              : `${reg.name} bounding box`}. Black line: Land-sea boundary.
+          </span>
           <span>Selected Cell: [{lat(cell[0])}°N, {lon(cell[1])}°E]</span>
         </div>
       </div>
