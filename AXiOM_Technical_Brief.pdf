@@ -1,106 +1,117 @@
-# AXiOM — Multiverse of Monsoon
-## Track 2: Earth-System Modelling and Climate Simulation
+%PDF-1.4
+%���� ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 5 0 R /F5 6 0 R /F6 7 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F4 /Subtype /Type1 /Type /Font
+>>
+endobj
+6 0 obj
+<<
+/BaseFont /ZapfDingbats /Name /F5 /Subtype /Type1 /Type /Font
+>>
+endobj
+7 0 obj
+<<
+/BaseFont /Symbol /Name /F6 /Subtype /Type1 /Type /Font
+>>
+endobj
+8 0 obj
+<<
+/Contents 13 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 12 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
 
-### 1. Problem and approach
+>> 
+  /Type /Page
+>>
+endobj
+9 0 obj
+<<
+/Contents 14 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 12 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
 
-AXiOM is a data-driven system for India-focused monsoon forecasting and scenario simulation. It produces a 10-day rollout from recent atmospheric conditions and supports controlled perturbations to explore alternative weather scenarios.
+>> 
+  /Type /Page
+>>
+endobj
+10 0 obj
+<<
+/PageMode /UseNone /Pages 12 0 R /Type /Catalog
+>>
+endobj
+11 0 obj
+<<
+/Author (\(anonymous\)) /CreationDate (D:20261127032510+05'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261127032510+05'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (Multiverse of Monsoon - Technical Brief) /Trapped /False
+>>
+endobj
+12 0 obj
+<<
+/Count 2 /Kids [ 8 0 R 9 0 R ] /Type /Pages
+>>
+endobj
+13 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 4507
+>>
+stream
+Gau0FBli#u')h6*d2ug6*K(I=ih03&.bTtp-+9n2Eb_pm.KtDK&eV:c+c/t]J)Ai[&-PEuKPACTMZTb1h*(`5,W&EhUWMD"8G)b9%c;#sl#_&Bg-?P&eU'?jHM66/>"(G*(!A>^!SQ%#d5BasF')K)E]SQ%*OL,kXBpV5;('WI*HdqIl`5oC)n(CDn#5uS#]frGUm[nNRQeYe(<=f7*M<!Xi]E9[.D6&cd*2`bpbP-Y"$G[8TRBC5J'lg@@"W<<6WJjCbMfKNp!0;2mk+qCl\eU&=8]G)A6OjoX0ea\11X*q74Q([=c1$6/bQ!tQ13pumm4\>W@tF="cX:#/j_To]t'aC0/$3hj5-7b9LS=3IN6b6R"TpSiQq&;V6l;>2p`:PJ+;=`8Fg-j=3EaA4ahVi6e"&7Pc+MVaQ#,C+IkVpXF5e<S4SWt^DA[bb2&<%\o)]l#-D&.&WnqD)=/mE#oL.mH61t$E$A3.<ScpaJmOA^:7r)@&Qk)-=H9^^97rL?cRa4g9\)MW#+B..V!*PFfEON>\>g^;eeC0Y(LFq>!I2N/9c"4[cPKIH?i(mMbl&[0iafdUXh85ugYC%NZo%r!/V'E#Wm8@;:O=eK[$%&D)j,rRrB0N.j++F="ZH]&1eZjQRK?r)"gMbFZ+LAtMA),`\KB'%:?.Kqeh*0,##JM&R3btS;mXuG_Y"A/!o1kTWQ7[e_kJ96B'$,s#\`dMk5`))f[[sWng&RJ=l)4$F\Pl&="h\gdQ#DuoC'e2hbDOD(<'DdM_$`qF]71g"<oqm?l@GW(hm.^1Y-AhBc3[0o;b+Uf#.N)RUY($qk;*i0o2+c3"[JJka*n&d2Jr(@npYko;#+!X-darUr)^:^jtIp!JTLke6R0Z;n"gmRa,phJ,ZRLXiIE?eTlV#,7"ak!oDmEek&]6I/Ra_^"k8R.,Z0G*n%&la)p-?g+Wog7/\5>/i)B`+Dul96C(31?FX8D2')Rnh'r*dDRUk@Mh<44kg&;M]lfMu4eS:t@>JlrG8#5_s6Tr4e+;:O^J_IoI$L#2:Jp'-#g-(i.T8M6Scl3?e"=SQ,f0U;&g[eEF#U#HcYf\;OA@W7>D[\hQGc)NK5m"d,,[Y`kW03*pl6FhKtnG_[p/6kUj`Hmm2#Rm;r-R<*O8Sl>-#"e66YIP8</rN0?W:s`P(<r*48K$[1sA:@n9+m,_BngeDo&54N2TbO-1\ON/JYtLnDb3.;WAY]RcKs"u=C')*7b$J'`G!m66T"pGPE!?s\C+Tc1T=e;kiq,0Bre$#eT,@b(aDN']Hh5+R81c;kTl2+N@>F$ulk@0Sqdc@jRrSZe3Mq#_?#!gsMR1j'Tc4""t'gl81=<NX!I]"0m!H1^Ws:gTu>iD.EH%k*=1IO&O.X@Ccm1IQ#8m*Ku(8DR+*pF=kdZ$d3ugd`PT*h&=_q,8mTnqGKm4K*k@Gl$:TO\c(g;2nff:F&io\%W-F^sRM;!+]k2%i7dB(l1SB_Fum4N=``jF<.8#+$!B>U_P=*K>S3cA8^hI/8?BfcfUENS]C9-mD(B)e2JJ8Q&mAF+QHBj@58Yo[B-qH2asPr"BSRNrD23;?`ObB(J%BN$2+H[>*+E0rriXkc"$3s4?&/W*'r;lTnumiYc6L;fYr<!Er3tKIoRN(M^+AG>V_ou4u\7EY6b(Y(-E'..\3%L6i`lO!6=8Yi$#JRi`%DrAt)IYJ,"8/qS(4J2b?e?0@,)/4_aTg["\M=o&IK7hkX<:,ef2B4@Q/>F8(T^:>ta`_GKUm:nT-L`mC1/i2PW?Q64Ir!;*?$bgAWG&ATMUJEpCcHE_#hQ-2,t]qra8r)NPEA,I&/c[hj`'aaG:c6_tncUB]YU5kTs%NnUSK-37QbbZ70bf?2(;r,jA%>Ht@\:LD4OLMn0C['bX]j'15olLA>cP4+M*'G8ngS&\NpAm7Y>A_7r.`4lUk81*_i.//N!#P.ReuWd&oX%8bTT^Rt53Q1G=D+/+Np'mi67]`7C?sn@mq_hoL#l[h1g^*J+[O$aIFeG6NJrM%LZdc_#GhAs",E0r2'4SZG(1%!g$r%KmC=:3#r_YKgbas7895b>"`RJ%,2s`:/U49?1N8b<gaEXEV%?;I3FZ8e:n4>G\pe/QZ_o3*oVdYeDh[PJkW$aR3.\]7Z-nAK?/EljE"rZ!09<j+i:)R#f-g1HXHPrLjT7>,f(X/9@lN/*.t(?u"mMoU:>X"(+WJFg1E1Q_7=-QQ&lXs=kXS'BM4t#Oj.88UC0="P/jH)n7Vt3LUDISXA7R_X<)jCD(o\E27Xp(<ie*.;#P1'g*0i+g3)6A88':1Si'F<jgmlhF>cI_7][)5NjaI+I@QjPW>V43R"tJZ\Y%55I%BP?2-/1=Go3rpk*#b,G$iQ'sr"E*jJKqtZ+$.E[G<$,d?ch^Jk;O)90.XZB0`Nt%#VNI?]*n7lg(A<Ml2QYuh15p"ir,dQ3i`H(rCHAV:U#,*[_tmSFQ4b(GXXs=k#sA&8XOlV]<HKm:6$gC.Xdn#s4>dhne,N\'Ii4$[UK2HgKlN2Lg,\Vn,^\fBKkjDHRpk6.j#6@ifFJ\)4CY]Nqn#(1#ki^*#@^"KD^s-q;VXaB'C%$Rn82UXGL,\<F/QH\,%M(4`k5!(6Ns!E:0LLF=4A7#$>n/4CY]T92W/=9=@Q"PT7dW^!`/(=$O9>;CfT0S"2!@qIS8)$dTVh);m0;h6fkV[15"Y3inkPJ!o1N8IoCG=;KDb((s#uJ.J'nMst1q+Bq8S2Yo2sO*M.d1)ckLVi+@+,bQHuKf*5N@f(--LjD04ZSF!PL!F^Z&Ym:HloWBV!7)+OYb\mk'Q/'@o^IrjU\0^iKXS-e1,R1Z![-j]kLnm(8NEOoB+sA0UE3)K<:^>qCL[?!JILW?JsSDD&.2]^T,EM?:)@Rj1>->oaDhB52he$MkC0jKetL>B#$Pl`FooS77:>O+d-PU?q<DmNOFXJNgjD<LBQ)_"-jM();+6RjpsMt\3Xod;D5_6I9a]g[%NY$WK"85`X`E7iW3YY:Vht\/r_<UF4p!HRN\%)jLB\X%+j$drb28WF'+K[S0F<7[!osJ*36-66`m))).`T1Y:O,ce"\qQh<O3B/Zg%,QR"]P=98a3t6%!d(T_SYLR%VPN#NQcFag.JI:?*uO.X0:1C6p+&kl#PU.6$Gj2')(]nJG(Zh,`m-BniYP3'-[fp`D\N#2Nhg,C[op'T3r8"\dj/IEd@=FT)0l.ENA6)AZP(Xh]HepiV4;cLul112PKdBIL=S=Oss#OO:=doi=7AY6"]RM^GWo_#h9PbH^P;G)!.L"%W;*G/&l5IcDl.EulRq5N(,Zm+$Yr)`k=S'_tp&7G"3kYF:4d*?NY1ficqBrXj.NN7Ea].mkOs^bbh`f@&c9d:jWeZPu+73e0J>\t.CVG?$pSlsTdp$oZ?"[KlqDlY#^YlQZHu?0u&"]bsio)e&!Vcf_>Pfo;V&<X-l&JC)QsJ9X>c"pe4!;7.2_GW\*]ZS4uH[0s.>DJKOP/i]!:M849^>/<O(pB&;a?%:/[kZ@WMGmA/-j0E)Aof81;6Q_c,a9bBcO6!DX55&MJnn4'n%oL&g^VC"<OV-_.HDmK8YYaG!O(72N9bSJkNmP3^1`FiSh9[!Z/DCOO=pYY_l2ZgH>hZI1*'\l]2YQ8o.M.A`<;o^uR`h#W*M,JI]\oL,[=JD[E->XL!D*qCet[h8#KAiC<Vi';Pe@s*/]Z0UGJ80$,K+lgoP.ph`oEKRO]4(Q%`&bMddklTOBT6dgVen'5g<O(EQV'IgPq4.^TW#tiO*XPY:#<[oqHaCWQjV[Y^o\mYQGgT8=J0JfT3pr4$&DL^%Pe<77t>bqbf!A-.bXE0Zqd`-[;#2a7J"cGRP>-JsE_1ahNQu<ur<BOBQX`@9DZ0,j`iHjRBOX*f%lBgQQ]@gZj;NTY]EK6d0BR6m(i$Cl[RXb-/e>^%M1YPN-,0Z=r%B<o6F9DB<RE(tP9YVktm_+ggW+Wj0p9a+f_*=k.k@>su!Kgl7.*]<@/'B[H5CbMb!DH1q#b-IldNq>GaI6l<qhRe$R%>04=I?iGgf%4Q::<kT0pTsEI7Q_kt3?b"e_.E\Zjgs7iRjm+N45JQeG_67<mo+&b#I_<B6O$iZ5`oF0@<[HdT*3R>qH[8-YeT%5V@f5d/DQDc<5Ai\0E2or7h=^rg'Di[H;C!uV:j'tW<JT.:?UgK`W%tY,*V)lo-6!3OONSNlS"h0XH#+aVWShc9OEWtE^0K>gkrNcrf`B>c<:C93bq\fZG\[[A]BYH4`Q-="s49'GehtnpP%*1W3T/5(J9q%?1W;'4Xt_R;<thq27R/3/X>ZEp[G0sbBnL*bAt!-mi$E<kb8P$7k-DWs0<6R=cs2kqQHP;K*7.fQf?6TuD95s5n;soc,d3Pm]"K_W]WT4Vf4=^,:p#+rc_8'dSqH/69-?#ZIF4kKag_Ho;q)UX$<,JIA2$H#dA3udZc!&He/'Wm?al#)2;P4/X]l(\*<_hEMdXmSTP+90b#g["~>endstream
+endobj
+14 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2189
+>>
+stream
+Gatm;D/U@P')nJ00dr,MBe;cSGP-hTpap?%.H$,<"utrcC3R$obU#1n=13._qsF->.k>YRDM5e:@-`M.S9^]oB4_eAj-@Qt=\3_DT\")p8d;Y);)7ErB^q*8(G@tc89Q@Nj5+<)mZ2$B+85u]@"RS2F"\CWa`Kk__(Za%L\Tc!c:11,`=(<lp=B^e;<!H6-0'6h/6pO>p#n^XdL/L%>H-jR\Fn8US("pH`)8)L-+d6cpdg;bJj9:PX3IPFdd-@MlGoOslp5RH\<,(52[hlDH\:P#@a-1+B.G_j2ba%m,9K%2N[g1ILk9[\NWcIqZ0kY/=2pOmB2%b3cd@f\fN*Bj=]p$]^,i):T#*;,/\MbAT3f2oTbRrB>H&"!;U2hsKZ=Cu2se1.KU5/,Bl\A]*>.h;hj`sWILt_EQ\7nRi>i&KNsg*YA3-Q38YBVgF(ZXh<`1_Z=hOWGp\Xs[%_Y"j.Hu%tYpI3$)$2(G=lTLD;?WoK6>KWi0]oi*Q\#Q&Kb`,V_(/]X>3Eb?aj`L\Cc6*pfUbpZ8p(ke=A`Wp%XBQgEor?M5+DU;b6?gU%8g6Vc'0c1?ZqK77hc,%6qD<&ka[*e3ff:RD!fi]ED=H`)[VQ];c^b-LXWp]YTNNK.c>TVs/f<&<pQ-Uf-\,'G@K7B^kDpHSreFeFkNRLe,c!,0("#t[\P_K@TITj\c=uW,K%3W+,=Rqq9K$'TDs=]_$QZ9e=Fs.c%:BH*X6ekIA$7qU$ekOVCs#Q$!d'83j5)5-2f$&k@!e4rls#U$c/[C:-bcE<WYjukNkl%IN=((r:L4D0?@-!&M\*tX+c_/A&&PGVnP!j>-jJ3S^ed<\PcYC>ce&k\LF@5+_e5$jPDV]-M-*\R5pg\cdrRT)a_kq/N2&,QHm=<>fH8PU%hol/tiWJ\mLe[%U%2L%M\f5'r\"U!4*W\,al"4d\CPROPPSS6#GR:dbtdLBr[O)O"Ut8joR-5`7ps"Y-KUo@OtC%25@Tam/9W<1j-)P`?UkgRPqaX@i]H3cZ?MN\ler48<E'9$"ObE3JO-bMr;<%)Ob^OZQN2Xnd$!Yo6G9HbUi/qNTp#:;U@KuhsX4uW`H9^`=%d9#sI;k:%PJ&+Om)o1KEUh7T\?05kLa\J2uYH(6njorJt!(*K,9,"F@;+`6kFbI,)kFRPn`"eS=I\Hr.mU9-;i^&P34eq*H$X8\<,I:FfH&[@(BlJ,#S-/SH2cT(:ReV?(KV]%Vf6SN_CBi<Q"g5/7]Y0Dba@'SSG9rp6"7R*H6)J`k.-oAIrm3oh\pl6<U9Zu]g'h3QF]R5Ob5?aZat-66j1lfotZkO+C`2KK\E\ehBnc")Q0:g;G)1K*Uc5UAYu,g_Sm(s]Kci%+Z7XhN!L28gYd'qnrPF).!h@M,=H==tJe)O'X37PDE"l@Qe"\GoVh1kWTRC&%O5K;Qs!;K<1uj4Ucb2jYYk>XAGJe,`F%1;7Af0Oo!P>b66f>jKla6PJ`/?ZR)Rpd+f=S^d_l0HCQKF"6\`=ujAH79'LtpL@*\oW]ISLC<Q.<[a^N#8tR,)8YVkKp2A<F*i4X,?-7(,M3Mn5ttFS:V28"]HNKDcp6H/$,;14<$H6+B.k(A:bnPhAaJ[THi3u2JApn7Yk+H1j,Ya,aH26.bGE%"fKK[kpL,X9h3qMULrP)rDYP=2`Gmr+0bneD2_jZ&jD#V6$dAf/j'\[jR7J<:r)@19aoc0@"VlE<lpIY)h'Eai>=T]t\rJ`*UY$(oFHflO(PHQ.i!6A,(A0F8&BKeapO]IhS>aOSfbj,0GiD!ZPllZl<t6KOcFIqcCR2I`9AS(/+Eb[e$oTF*W^aQrH'sV]!/q<M11`fL3b$VYcR2L[HaD[Z9BJ70lBitcjF,t@[jaVq'U*Vmkn@SgFR&lPrBB&%..l:[!4;9('?2`B2,i.?,S]fZ_p-V_0^B\rLam>?+GYC_[h$H%KVDM[V**OoKel9jm4kRoSdh9[?,%,;$VZ^>H@IRsB<&BlGb":>RY\(o9@K(X_`B]TR+Q*053S`F@>L`<oHatrm*?`:qN;Frm/!LVb>=j?itf(2In[eEq,?,.>9gk`:m)g\mB^CTQ/%Z,#CG0"3*`4[**7@WA]P7#F5XJ:9/D;bNt$j;4iI:N`"'(IbaL*DSb+e`5c1B;Xk>6GgWcm1YgB)3f"1\JE3eOh"%FsC&,>09K`~>endstream
+endobj
+xref
+0 15
+0000000000 65535 f 
+0000000061 00000 n 
+0000000142 00000 n 
+0000000249 00000 n 
+0000000361 00000 n 
+0000000476 00000 n 
+0000000581 00000 n 
+0000000664 00000 n 
+0000000741 00000 n 
+0000000946 00000 n 
+0000001151 00000 n 
+0000001221 00000 n 
+0000001528 00000 n 
+0000001594 00000 n 
+0000006193 00000 n 
+trailer
+<<
+/ID 
+[<9632a9b28548b35b194040d48976d6f1><9632a9b28548b35b194040d48976d6f1>]
+% ReportLab generated PDF document -- digest (opensource)
 
-The system is designed for offline evaluation: model inference runs locally, without depending on external weather APIs or downloading model weights at runtime.
-
-### 2. Dataset
-
-Training and historical evaluation use `india_climate_train.nc`, containing 6,209 daily observations from 1 January 2005 to 31 December 2021.
-
-- Spatial grid: 32 × 36 over India and surrounding regions
-- Dynamic channels: 2-metre temperature (`t2m`), precipitation (`tp`), 10-metre u/v wind (`u10`, `v10`), mean sea-level pressure (`msl`) and total-column water vapour (`tcwv`)
-- Input: three recent days across six channels
-- Forecast horizon: ten days
-- The dataset is kept outside the Git repository; the runtime reads the configured local dataset path.
-
-### 3. Model and inference
-
-AXiOM uses MonsoonNet-lite, a lightweight NumPy-based neural forecasting model. Its learned predictor uses a 219-feature representation, dense layers of 128 and 128 units, a six-channel output and a linear skip connection. Local spatial context is incorporated through a 5 × 5 neighbourhood.
-
-The model autoregressively feeds predictions into subsequent forecast steps. Output safeguards ensure finite values and non-negative precipitation. The implementation includes training code and committed model weights.
-
-The root-level `serve.py` exposes the inference API:
-- `GET /health` — model readiness
-- `POST /simulate` — forecast rollout with optional perturbation
-
-The service is designed to run locally using `python serve.py --port 8000`.
-
-### 4. Multiverse and analysis dashboard
-
-The dashboard provides historical-window exploration and analysis tools around the model API:
-
-- Timeline Prime: compare forecast rollouts with historical observations.
-- Multiverse: apply spatially varying perturbations and inspect resulting scenarios.
-- Ensemble: compare multiple perturbed initial conditions.
-- Sensitivity and reverse simulation: examine model responses to selected inputs and target outcomes.
-- Memory Lab: explore recovery and compensation behaviour in modelled scenarios.
-- Trust and validation: inspect model health, numerical validity and evidence-based checks.
-
-Derived quantities and proxy indicators are identified as such. Ensemble spread is not presented as calibrated uncertainty. Sensitivity and reverse-simulation results describe model responses, not proven atmospheric causality. Memory Lab is a conceptual model analysis, not a claim that the atmosphere has literal memory.
-
----
-
-**INSERT PAGE BREAK HERE**
-
----
-
-# AXiOM — Technical Validation and Limitations
-
-### 5. Validation
-
-The official `monsoon_r1.schema_validator` was run against the local inference server:
-
-`python -m monsoon_r1.schema_validator http://localhost:8000`
-
-**Result: all checks passed (exit code 0).**
-
-The validator successfully exercised all six combinations:
-- JSON-list input: no perturbation, warm-ocean perturbation and zero perturbation.
-- Base64 input: no perturbation, warm-ocean perturbation and zero perturbation.
-
-A historical-window smoke test using 15 June 2018 confirmed:
-- Input shape: `(3, 6, 32, 36)`
-- Available truth shape: `(10, 6, 32, 36)`
-- Historical input and truth values were finite.
-- A 10-step forecast returned finite values, with no negative precipitation values.
-
-For this one sample, the mean spatial rainfall prediction differed from the observed spatial mean by approximately **0.631 mm/day**, averaged across the ten forecast days. This is a spatial-mean comparison for one window, not grid-cell MAE or a generalised skill claim.
-
-Stored historical evaluation summaries:
-- 2018–2019: 144 windows; zero invalid windows; mean window skill approximately 0.1204.
-- 2020–2021: 145 windows; zero invalid windows; mean window skill approximately 0.1166.
-
-In the stored evaluations, Day-4 rainfall CSI exceeded persistence. These results are historical validation evidence and should not be interpreted as proof of performance on unseen 2023–2024 events.
-
-### 6. Reproducibility and repository contents
-
-Key submission components:
-- `serve.py` — root-level inference server.
-- `weights/model.npz` — trained model weights, committed as a normal Git file.
-- `training/` — model training and data-reading implementation.
-- `dashboard_server/` and `frontend/` — analysis dashboard.
-- `README.md` — setup and usage instructions.
-
-Run the inference service:
-
-`python serve.py --port 8000`
-
-Run the official validator:
-
-`python -m monsoon_r1.schema_validator http://localhost:8000`
-
-The training dataset must be supplied separately at runtime through the configured dataset path. It is not bundled as a repository data archive.
-
-### 7. Limitations and responsible interpretation
-
-The available training dataset ends in 2021. Hidden 2023–2024 weather windows are outside this historical period, so their performance must be established by the evaluator rather than assumed.
-
-The lightweight model uses local spatial context and autoregressive rollout; forecast errors can accumulate over longer horizons. The ensemble is not calibrated probabilistic uncertainty. Sensitivity and reverse simulation are model-response experiments, not causal attribution. Dashboard proxy and derived metrics should be interpreted according to their labels.
-
-### 8. Conclusion
-
-AXiOM provides an offline-capable neural forecasting service, perturbation-based scenario simulation, a supporting analysis dashboard and reproducible training components. Its inference interface passed the official schema validator, and historical smoke tests confirmed valid finite rollouts with non-negative precipitation. Further evaluation on hidden event windows is necessary to establish generalisation and competition-level forecast skill.
+/Info 11 0 R
+/Root 10 0 R
+/Size 15
+>>
+startxref
+8474
+%%EOF

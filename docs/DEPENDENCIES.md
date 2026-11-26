@@ -1,5 +1,5 @@
 # Dependencies
-Versions are not pinned or locked yet. Pin them after a successful run on your machine.
+Graded runtime dependencies are pinned in requirements/runtime.txt (NumPy, Pydantic, FastAPI and Uvicorn). Training and development dependencies are declared separately; not every package is version-locked.
 
 | Package | Purpose |
 |---|---|
