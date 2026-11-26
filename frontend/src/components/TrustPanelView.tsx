@@ -10,6 +10,11 @@ export function TrustPanelView({ meta, serverStatus }: Props) {
   const evalVal = meta?.eval_val as any;
   const evalTest = meta?.eval_test as any;
 
+  const fmt = (value: unknown): string =>
+    typeof value === "number" && Number.isFinite(value)
+      ? value.toFixed(3)
+      : "unavailable";
+
   return (
     <div className="space-y-6">
       {/* Live Server Connection & System Metadata */}
@@ -139,7 +144,7 @@ export function TrustPanelView({ meta, serverStatus }: Props) {
               </div>
               <div className="flex justify-between py-1.5">
                 <span className="text-text-muted">Null Shock Bitwise Identity:</span>
-                <span className={`font-bold ${evalVal.null_all_ok ? "text-teal-300" : "text-amber-300"}`}>
+                <span className={`font-bold ${evalVal.null_all_ok ? "text-teal-300" : "text-[#75472F]"}`}>
                   {evalVal.null_all_ok ? "Verified (Exact Bitwise Match)" : "Identity Check Failed"}
                 </span>
               </div>
@@ -199,7 +204,7 @@ export function TrustPanelView({ meta, serverStatus }: Props) {
               </div>
               <div className="flex justify-between py-1.5">
                 <span className="text-text-muted">Null Shock Bitwise Identity:</span>
-                <span className={`font-bold ${evalTest.null_all_ok ? "text-teal-300" : "text-amber-300"}`}>
+                <span className={`font-bold ${evalTest.null_all_ok ? "text-teal-300" : "text-[#75472F]"}`}>
                   {evalTest.null_all_ok ? "Verified (Exact Bitwise Match)" : "Identity Check Failed"}
                 </span>
               </div>
@@ -240,14 +245,14 @@ export function TrustPanelView({ meta, serverStatus }: Props) {
       {/* Prominent Scientific Limitations & Disclosures */}
       <div className="rounded-2xl border border-amber-500/40 bg-amber-950/20 p-5 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <span className="rounded-md bg-amber-500/30 border border-amber-400/50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">
+          <span className="rounded-md bg-amber-500/30 border border-amber-400/50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#75472F]">
             Scientific Caveats
           </span>
-          <h3 className="text-sm font-bold text-amber-200">
+          <h3 className="text-sm font-bold text-[#29364A]">
             Known Scientific Limitations &amp; Transparency Disclosures
           </h3>
         </div>
-        <ul className="mt-3 list-inside list-disc space-y-2 text-xs leading-relaxed text-amber-100/80">
+        <ul className="mt-3 list-inside list-disc space-y-2 text-xs leading-relaxed text-[#5A4634]">
           <li>
             <strong>Coarse Spatial Resolution:</strong> The 1° × 1° ERA5 grid (approximately
             100 km) cannot resolve convective-scale thunderstorms, cloud microphysics, or

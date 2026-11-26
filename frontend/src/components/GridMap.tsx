@@ -30,21 +30,33 @@ function color(t: number, diverging: boolean): string {
   return `hsl(${hue} ${sat}% ${light}%)`;
 }
 
-export function GridMap({ title, grid, range, diverging, land, cell, onCell, unit, showOutline = true }: {
+export function GridMap({ title, grid, range, diverging, land, cell, onCell, unit, showOutline = true, regionBounds }: {
   title: string; grid: Grid; range: [number, number]; diverging: boolean; land: number[][];
   cell?: [number, number]; onCell?: (c: [number, number]) => void; unit: string; showOutline?: boolean;
+  regionBounds?: { lat: readonly [number, number]; lon: readonly [number, number] };
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const g = ref.current!.getContext("2d")!;
     const [lo, hi] = range;
+    const heatmap = document.createElement("canvas");
+    heatmap.width = NLON;
+    heatmap.height = NLAT;
+    const heat = heatmap.getContext("2d")!;
     for (let i = 0; i < NLAT; i++) {
       for (let j = 0; j < NLON; j++) {
-        g.fillStyle = color(hi > lo ? (grid[i][j] - lo) / (hi - lo) : 0.5, diverging);
-        g.fillRect(j * S, (NLAT - 1 - i) * S, S, S);
+        heat.fillStyle = color(hi > lo ? (grid[i][j] - lo) / (hi - lo) : 0.5, diverging);
+        heat.fillRect(j, NLAT - 1 - i, 1, 1);
       }
     }
+    g.clearRect(0, 0, NLON * S, NLAT * S);
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = "high";
+    g.save();
+    g.filter = "blur(1.2px)";
+    g.drawImage(heatmap, 0, 0, NLON * S, NLAT * S);
+    g.restore();
 
     // Land/sea coastline boundary
     g.strokeStyle = palette.mapLandBoundary;
@@ -58,10 +70,32 @@ export function GridMap({ title, grid, range, diverging, land, cell, onCell, uni
       }
     }
     g.stroke();
+    // Show selected region, or the national India outline by default.
+    if (regionBounds) {
+      const [south, north] = regionBounds.lat;
+      const [west, east] = regionBounds.lon;
+      const x = (value: number) => (value - lon(0) + 0.5) * S;
+      const y = (value: number) => (lat(NLAT - 1) + 0.5 - value) * S;
+      const rx = x(west);
+      const ry = y(north);
+      const rw = x(east) - rx;
+      const rh = y(south) - ry;
 
-    // India national geographical outline overlay
-    if (showOutline && INDIA_OUTLINE.length > 2) {
-      g.strokeStyle = "rgba(245, 166, 35, 0.85)"; // High-contrast warm gold overlay
+      // Dark outer border for contrast.
+      g.setLineDash([]);
+      g.strokeStyle = "rgba(15,23,42,0.95)";
+      g.lineWidth = 6;
+      g.strokeRect(rx, ry, rw, rh);
+
+      // Bright magenta dashed selected-region boundary.
+      g.strokeStyle = "#ff2d75";
+      g.lineWidth = 3;
+      g.setLineDash([9, 4]);
+      g.strokeRect(rx, ry, rw, rh);
+      g.setLineDash([]);
+    } else if (showOutline && INDIA_OUTLINE.length > 2) {
+      // High-contrast warm-gold India outline from the redesigned UI.
+      g.strokeStyle = "rgba(245, 166, 35, 0.85)";
       g.lineWidth = 1.6;
       g.beginPath();
       INDIA_OUTLINE.forEach(([li, lj], idx) => {
@@ -78,13 +112,13 @@ export function GridMap({ title, grid, range, diverging, land, cell, onCell, uni
       g.strokeStyle = palette.selectionHighlight;
       g.strokeRect(cell[1] * S, (NLAT - 1 - cell[0]) * S, S, S);
     }
-  }, [grid, range, diverging, land, cell, showOutline]);
+  }, [grid, range, diverging, land, cell, showOutline, regionBounds]);
 
   return (
-    <figure className="min-w-0 rounded-2xl border border-twilight-border bg-twilight-surface-raised p-4 shadow-md transition-all">
+    <figure className="min-w-0 rounded-xl border border-[#DED6C9] bg-[#FFFEFA] p-3 shadow-none">
       <figcaption className="mb-2.5 flex items-center justify-between text-xs font-bold tracking-tight text-text-bright">
         <span className="truncate pr-2">{title}</span>
-        <span className="shrink-0 rounded bg-steel-700/60 px-2 py-0.5 font-mono text-[11px] font-semibold text-teal-300">
+        <span className="shrink-0 rounded-md border border-[#2B3A52] bg-[#1D2A3E] px-2.5 py-1 font-mono text-[11px] font-bold text-[#FFFEFA]">
           [{unit}]
         </span>
       </figcaption>
@@ -94,7 +128,7 @@ export function GridMap({ title, grid, range, diverging, land, cell, onCell, uni
           ref={ref}
           width={NLON * S}
           height={NLAT * S}
-          className="h-auto w-full cursor-crosshair transition-opacity hover:opacity-95"
+          className="mx-auto block h-auto w-auto max-h-[420px] max-w-full cursor-crosshair"
           aria-label={`${title} grid map`}
           onClick={(e) => {
             if (!onCell) return;
@@ -120,8 +154,8 @@ export function GridMap({ title, grid, range, diverging, land, cell, onCell, uni
       </div>
 
       <div className="mt-1.5 flex items-center justify-between text-[11px] text-text-subtle tabular-nums">
-        <span>Subcontinent: {lat(0)}–{lat(31)}°N, {lon(0)}–{lon(35)}°E</span>
-        <span className="text-teal-400 font-medium">1° ERA5 Resolution</span>
+        <span>Subcontinent: {lat(0)}â€“{lat(31)}Â°N, {lon(0)}â€“{lon(35)}Â°E</span>
+        <span className="text-teal-400 font-medium">1Â° ERA5 Resolution</span>
       </div>
     </figure>
   );

@@ -11,12 +11,12 @@ export function LineChart({ series, unit }: { series: Series[]; unit: string }) 
       <svg viewBox="0 0 600 200" className="w-full tabular-nums" role="img" aria-label={`Ten day series in ${unit}`}>
         {[lo, (lo + hi) / 2, hi].map((v) => (
           <g key={v}>
-            <line x1={60} x2={576} y1={y(v)} y2={y(v)} stroke="#475D6B" strokeDasharray="3 3" strokeWidth={1} />
-            <text x={52} y={y(v) + 4} fontSize={11} fill="#A9BDC8" textAnchor="end" fontWeight={500}>{v.toFixed(1)}</text>
+            <line x1={60} x2={576} y1={y(v)} y2={y(v)} stroke="#DED6C9" strokeDasharray="3 3" strokeWidth={1} />
+            <text x={52} y={y(v) + 4} fontSize={11} fill="#29364A" textAnchor="end" fontWeight={500}>{v.toFixed(1)}</text>
           </g>
         ))}
         {Array.from({ length: 10 }, (_, i) => (
-          <text key={i} x={x(i)} y={190} fontSize={11} fill="#829AA7" textAnchor="middle" fontWeight={600}>D{i + 1}</text>
+          <text key={i} x={x(i)} y={190} fontSize={11} fill="#5A4634" textAnchor="middle" fontWeight={600}>D{i + 1}</text>
         ))}
         {series.map((s) => (
           <polyline

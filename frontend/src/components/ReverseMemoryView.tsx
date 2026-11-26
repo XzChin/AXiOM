@@ -153,7 +153,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
         {revResult && (
           <div className="mt-5 space-y-4">
             <div className="rounded-xl border border-twilight-border bg-twilight-base p-4 text-xs text-text-main tabular-nums">
-              <div className="font-bold text-teal-300">
+              <div className="font-bold text-[#75472F]">
                 Optimal Initial Shock Found: {CHANNELS[revResult.best_candidate.channel].label} amplitude of{" "}
                 {revResult.best_candidate.amplitude > 0 ? "+" : ""}
                 {revResult.best_candidate.amplitude.toFixed(2)} {CHANNELS[revResult.best_candidate.channel].unit} at [
@@ -162,7 +162,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               <div className="mt-1 text-text-muted">
                 Regional mean in {REGIONS[revRegion].name} shifted from{" "}
                 <strong className="text-text-bright">{revResult.baseline_mean.toFixed(2)}</strong> to{" "}
-                <strong className="text-teal-300">{revResult.best_candidate.achieved_mean.toFixed(2)}</strong> {CHANNELS[revCh].unit} (Δ{" "}
+                <strong className="text-[#75472F]">{revResult.best_candidate.achieved_mean.toFixed(2)}</strong> {CHANNELS[revCh].unit} (Δ{" "}
                 {revResult.best_candidate.delta > 0 ? "+" : ""}
                 {revResult.best_candidate.delta.toFixed(2)}).
               </div>
@@ -206,8 +206,8 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
               value={memShock}
               onChange={(e) => setMemShock(e.target.value as any)}
             >
-              <option value="warm_ocean">Warm Bay scenario (+3 K t2m, +15% TCWV)</option>
-              <option value="monsoon_stall">Monsoon Stall scenario (Arabian Sea 10 m winds -40%)</option>
+              <option value="warm_ocean">Warm Bay of Bengal (+3K, +15% TCWV)</option>
+              <option value="monsoon_stall">Monsoon Stall (Arabian Sea Wind Drag)</option>
             </select>
           </div>
           <div className="space-y-1">
@@ -250,7 +250,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
 
             <div className="space-y-3.5 text-xs text-text-main">
               <div className="rounded-xl border border-twilight-border bg-twilight-base p-4">
-                <span className="font-bold text-teal-300">Recovery Diagnosis:</span>
+                <span className="font-bold text-[#75472F]">Recovery Diagnosis:</span>
                 <p className="mt-1 leading-relaxed text-text-muted">
                   {memResult.time_to_return_day
                     ? `System returned within tolerance (<5% initial disturbance) by Day +${memResult.time_to_return_day}.`
@@ -258,7 +258,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
                 </p>
               </div>
               <div className="rounded-xl border border-twilight-border bg-twilight-base p-4">
-                <span className="font-bold text-steel-200">Atmospheric Memory Definition:</span>
+                <span className="font-bold text-[#29364A]">Atmospheric Memory Definition:</span>
                 <p className="mt-1 leading-relaxed text-text-subtle">
                   Measures the relaxation timescale of non-linear circulation anomalies back to control climatology after an oceanic thermal or kinematic pulse.
                 </p>
