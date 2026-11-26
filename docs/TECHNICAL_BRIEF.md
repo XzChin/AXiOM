@@ -16,7 +16,7 @@ The **Multiverse of Monsoon** is an end-to-end, scientifically grounded climate 
 6. $tcwv$ (Total column water vapor, kg/m²)
 
 Unlike traditional black-box emulators that risk unphysical extrapolation, our design follows three foundational principles:
-- **Strict Physical & Contract Adherence:** Strictly adheres to the official input/output tensor contract $[3, 6, 32, 36] \to [S, 6, 32, 36]$, offline CPU-only execution ($< 40$ ms inference latency, $< 500$ MB RAM), non-negative precipitation ($tp \ge 0$), and exact zero-perturbation identity.
+- **Strict Physical & Contract Adherence:** Strictly adheres to the official input/output tensor contract $[3, 6, 32, 36] \to [S, 6, 32, 36]$, offline CPU-only execution (local 10-step engine benchmark: 53 ms median, 62 ms p95; includes array conversion and excludes HTTP/JSON overhead), non-negative precipitation ($tp \ge 0$), and exact zero-perturbation identity.
 - **Controlled Receptive Field & Locality:** The core neural kernel enforces a compact $5 \times 5$ spatial neighborhood ($R=2$ grid cells), mathematically guaranteeing that Day-1 response to any localized shock cannot leak beyond 2 grid cells.
 - **Scientific Honesty & Epistemic Humility:** All outputs are explicitly categorized as **[MODEL]**, **[DERIVED]**, or **[PROXY]**. Downstream hazard metrics (crop moisture deficit, flood risk screening) are clearly designated as non-operational decision-support proxies, not official government warnings.
 
@@ -44,7 +44,7 @@ Input: [3, 6, 32, 36] (Days t-2, t-1, t-0) + doy_sincos [2] + static [32, 36, 2]
           - Anomaly limits curb runaway instability (t2m: ±6.0σ, tp: +1.9σ)
           - Non-negative rain enforcement & log1p inversion
 ```
-The model operates purely in NumPy, compiling zero external GPU or heavy C++ runtime dependencies. It achieves median 10-day autoregressive rollout in **38 ms** (p95 42 ms) on a single commodity CPU core.
+The model operates purely in NumPy, compiling zero external GPU or heavy C++ runtime dependencies. It achieves a median 10-day autoregressive rollout of **53 ms** (p95 62 ms) in the local engine-only benchmark, including array conversion but excluding HTTP/JSON overhead. Peak memory was not measured in this benchmark.
 
 ---
 
