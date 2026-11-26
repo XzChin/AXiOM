@@ -71,3 +71,82 @@ export function outsideResponse(shock: State, base: State, run: State, radius = 
       for (let j = 0; j < NLON; j++) if (!near[i][j]) m = Math.max(m, Math.abs(run[c][i][j] - base[c][i][j]));
   return m;
 }
+
+// ---- Derived fields ----
+
+/** Wind speed = sqrt(u² + v²) */
+export function windSpeed(state: State): Grid {
+  return state[2].map((row, i) => row.map((v, j) => Math.sqrt(v * v + state[3][i][j] * state[3][i][j])));
+}
+
+/** Pressure anomaly from spatial mean (hPa) */
+export function pressureAnomaly(state: State): Grid {
+  const p = state[4];
+  let sum = 0, count = 0;
+  for (const row of p) for (const v of row) { sum += v; count++; }
+  const mean = sum / count;
+  return p.map(row => row.map(v => (v - mean) * 0.01));
+}
+
+/** Moisture transport proxy: TCWV × wind speed (kg/m² × m/s) */
+export function moistureTransport(state: State): Grid {
+  const ws = windSpeed(state);
+  return state[5].map((row, i) => row.map((v, j) => v * ws[i][j]));
+}
+
+/** Regional mean of a grid over a lat/lon box */
+export function regionalMean(grid: Grid, latRange: [number, number], lonRange: [number, number], land?: number[][]): number {
+  let sum = 0, w = 0;
+  for (let i = 0; i < NLAT; i++) {
+    const la = lat(i);
+    if (la < latRange[0] || la > latRange[1]) continue;
+    const cw = Math.cos(la * Math.PI / 180);
+    for (let j = 0; j < NLON; j++) {
+      const lo = lon(j);
+      if (lo < lonRange[0] || lo > lonRange[1]) continue;
+      if (land && land[i][j] < 0.5) continue;
+      sum += grid[i][j] * cw;
+      w += cw;
+    }
+  }
+  return w > 0 ? sum / w : 0;
+}
+
+/** Monsoon Pulse: mean u10 over central monsoon domain as surface-wind onset proxy */
+export function monsoonPulse(rollout: State[]): number[] {
+  return rollout.map(s => {
+    let sum = 0, n = 0;
+    for (let i = 0; i < NLAT; i++) {
+      const la = lat(i);
+      if (la < 10 || la > 25) continue;
+      for (let j = 0; j < NLON; j++) {
+        const lo = lon(j);
+        if (lo < 70 || lo > 90) continue;
+        sum += s[2][i][j]; n++;
+      }
+    }
+    return n > 0 ? sum / n : 0;
+  });
+}
+
+/** Consequence proxies: rainfall deficit & flood screening */
+export function consequenceProxies(rollout: State[], land?: number[][]) {
+  const deficitThreshold = 2.0; // mm/day below which we flag "deficit"
+  const floodThreshold = 50.0;  // mm/day above which we flag "flood risk"
+  return rollout.map((s, day) => {
+    let deficitCells = 0, floodCells = 0, totalLand = 0;
+    for (let i = 0; i < NLAT; i++)
+      for (let j = 0; j < NLON; j++) {
+        if (land && land[i][j] < 0.5) continue;
+        totalLand++;
+        if (s[1][i][j] < deficitThreshold) deficitCells++;
+        if (s[1][i][j] > floodThreshold) floodCells++;
+      }
+    return {
+      day: day + 1,
+      deficit_frac: totalLand > 0 ? deficitCells / totalLand : 0,
+      flood_frac: totalLand > 0 ? floodCells / totalLand : 0,
+      mean_rain: regionalMean(s[1], [6.5, 37.5], [65.5, 100.5], land),
+    };
+  });
+}

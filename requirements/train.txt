@@ -1,4 +1,4 @@
 -r runtime.txt
-scipy
+scipy==1.18.1
 xarray
 netCDF4

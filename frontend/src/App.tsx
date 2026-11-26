@@ -1,137 +1,442 @@
-import { useEffect, useMemo, useState } from "react";
-import { getMeta, getWindow, simulate, Meta, Run, Window_ } from "./api";
-import { GridMap } from "./components/GridMap";
-import { LineChart, Series } from "./components/LineChart";
-import { CHANNELS, Grid, State, display, gaussianShock, latRmse, lat, lon, maxAbs, outsideResponse, presetShock, subtract } from "./utils/science";
+import { useEffect, useState } from "react";
+import {
+  Meta,
+  Run,
+  Window_,
+  getMeta,
+  getSampleWindows,
+  getWindow,
+  simulate,
+} from "./api";
+import { RegionId } from "./utils/india";
+import { State } from "./utils/science";
 
-const btn = "rounded bg-sky-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-40";
-const input = "w-full rounded border border-slate-300 bg-white p-1.5 text-sm";
-const card = "rounded-lg border border-slate-200 bg-white p-4";
+// Sub-views
+import { TimelinePrimeView } from "./components/TimelinePrimeView";
+import { ShockLabView } from "./components/ShockLabView";
+import { AtmosphereView } from "./components/AtmosphereView";
+import { ConsequenceView } from "./components/ConsequenceView";
+import { EnsembleSensitivityView } from "./components/EnsembleSensitivityView";
+import { ReverseMemoryView } from "./components/ReverseMemoryView";
+import { TrustPanelView } from "./components/TrustPanelView";
+
+type TabId =
+  | "timeline"
+  | "shock_lab"
+  | "atmosphere"
+  | "consequence"
+  | "ensemble_sens"
+  | "reverse_mem"
+  | "trust";
+
+const navTabs: { id: TabId; label: string; badge?: string }[] = [
+  { id: "timeline", label: "Timeline Prime" },
+  { id: "shock_lab", label: "Multiverse Shock Lab" },
+  { id: "atmosphere", label: "Atmosphere & Pulse" },
+  { id: "consequence", label: "Consequence Engine", badge: "Proxy" },
+  { id: "ensemble_sens", label: "Ensemble & Sensitivity" },
+  { id: "reverse_mem", label: "Reverse & Memory Lab" },
+  { id: "trust", label: "Trust Panel & Audit" },
+];
+
+const card = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
+const btnPrimary = "rounded-lg bg-sky-700 px-3.5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-sky-800 disabled:opacity-40 transition";
+const input = "w-full rounded-lg border border-slate-300 bg-white p-2 text-xs text-slate-800 shadow-sm";
 
 export function App() {
   const [meta, setMeta] = useState<Meta | null>(null);
+  const [sampleWindows, setSampleWindows] = useState<Window_[]>([]);
+  const [selectedSample, setSelectedSample] = useState("monsoon_onset");
   const [date, setDate] = useState("2021-06-10");
   const [win, setWin] = useState<Window_ | null>(null);
   const [base, setBase] = useState<Run | null>(null);
   const [shocked, setShocked] = useState<{ run: Run; delta: State; label: string } | null>(null);
-  const [ch, setCh] = useState(0);
+  const [activeTab, setActiveTab] = useState<TabId>("timeline");
+
+  // Shared view settings
+  const [ch, setCh] = useState(1); // default to Rainfall
   const [day, setDay] = useState(1);
-  const [cell, setCell] = useState<[number, number]>([13, 12]);
-  const [kind, setKind] = useState("warm_ocean");
-  const [g, setG] = useState({ ch: 0, lat: 15, lon: 88, radius: 3, amp: 2 });
-  const [cert, setCert] = useState<[string, boolean, string][] | null>(null);
+  const [cell, setCell] = useState<[number, number]>([14, 12]);
+  const [selectedRegion, setSelectedRegion] = useState<RegionId>("all_india");
+
+  // Snapshot / Time Machine state
+  const [snapshots, setSnapshots] = useState<{ name: string; time: string; run: Run; win: Window_ }[]>([]);
+
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => { getMeta().then(setMeta).catch((e) => setError(String(e))); }, []);
+  // Initial load
+  useEffect(() => {
+    getMeta()
+      .then((m) => {
+        setMeta(m);
+        // Also fetch sample windows for offline use
+        getSampleWindows()
+          .then((sw) => {
+            setSampleWindows(sw);
+            if (sw.length > 0 && !m.has_data) {
+              loadSample(sw[0]);
+            }
+          })
+          .catch(() => {});
+      })
+      .catch((e) => setError(String(e)));
+  }, []);
 
-  // All inputs are disabled while a request runs, so a late response cannot overwrite a newer selection.
   async function task(name: string, fn: () => Promise<void>) {
-    setBusy(name); setError("");
-    try { await fn(); } catch (e) { setError(String(e)); } finally { setBusy(""); }
-  }
-  const clear = () => { setBase(null); setShocked(null); setCert(null); };
-  const forecast = (w: Window_) => task("Forecasting", async () => { clear(); setWin(w); setBase(await simulate(w, null)); });
-  const loadDate = () => task("Loading", async () => { clear(); const w = await getWindow(date); setWin(w); setBase(await simulate(w, null)); });
-
-  const makeDelta = (): State => kind === "custom" ? gaussianShock(g.ch, g.lat, g.lon, g.radius, g.amp) : presetShock(kind as "warm_ocean" | "monsoon_stall", win!.init_states[2]);
-  const runShock = () => task("Running shock", async () => {
-    const delta = makeDelta(); setCert(null);
-    setShocked({ run: await simulate(win!, delta), delta, label: kind === "custom" ? `${CHANNELS[g.ch].id} ${g.amp} at ${g.lat}°N ${g.lon}°E` : kind });
-  });
-  const certify = () => task("Certifying", async () => {
-    const s = shocked!;
-    const zero = await simulate(win!, s.delta.map((x) => x.map((r) => r.map(() => 0))));
-    const again = await simulate(win!, s.delta);
-    const same = (a: State[], b: State[]) => JSON.stringify(a) === JSON.stringify(b);
-    const out = outsideResponse(s.delta, base!.rollout[0], s.run.rollout[0]);
-    const resp = Math.max(...s.run.rollout[0].map((x, c) => maxAbs(subtract(x, base!.rollout[0][c]))));
-    setCert([
-      ["Zero shock equals null shock", same(zero.rollout, base!.rollout), "exact comparison"],
-      ["Repeat run is identical", same(again.rollout, s.run.rollout), "exact comparison"],
-      ["Rainfall is non-negative", s.run.rollout.every((x) => x[1].every((r) => r.every((v) => v >= 0))), "all days, all cells"],
-      ["Day-1 response is non-zero", resp > 0, "at least one cell differs from baseline"],
-      ["Day-1 change stays within 2 cells of the shock", out === 0, `largest outside change ${out.toPrecision(3)}`],
-    ]);
-  });
-
-  const unit = CHANNELS[ch].unit;
-  const shown = (s: State): Grid => s[ch].map((r) => r.map((v) => display(v, ch)));
-  const maps = useMemo(() => {
-    if (!base) return [];
-    const b = shown(base.rollout[day - 1]);
-    const s = shocked ? shown(shocked.run.rollout[day - 1]) : null;
-    const t = !shocked && win?.truth?.[day - 1] ? shown(win.truth[day - 1]) : null;
-    const flat = [b, s ?? t ?? b].flat(2);
-    const wind = ch === 2 || ch === 3;
-    const m = Math.max(...flat.map(Math.abs));
-    const range: [number, number] = wind ? [-m, m] : [Math.min(...flat), Math.max(...flat)];
-    const list = [{ title: "Baseline (MODEL)", grid: b, range, diverging: wind }];
-    if (s) {
-      const d = subtract(s, b), k = maxAbs(d) || 1;
-      list.push({ title: "Shocked (MODEL)", grid: s, range, diverging: wind }, { title: "Delta: shocked − baseline (DERIVED)", grid: d, range: [-k, k], diverging: true });
-    } else if (t) {
-      const d = subtract(b, t), k = maxAbs(d) || 1;
-      list.push({ title: "Truth (from dataset)", grid: t, range, diverging: wind }, { title: "Error: model − truth (DERIVED)", grid: d, range: [-k, k], diverging: true });
+    setBusy(name);
+    setError("");
+    try {
+      await fn();
+    } catch (e: any) {
+      setError(e.message || String(e));
+    } finally {
+      setBusy("");
     }
-    return list;
-  }, [base, shocked, win, ch, day]);
-
-  const series: Series[] = [];
-  if (base) {
-    const at = (r: State[]) => r.map((s) => display(s[ch][cell[0]][cell[1]], ch));
-    series.push({ name: "Baseline", values: at(base.rollout), color: "#0369a1" });
-    if (shocked) series.push({ name: "Shocked", values: at(shocked.run.rollout), color: "#c2410c" });
-    if (win?.truth?.length === 10) series.push({ name: "Truth", values: at(win.truth), color: "#15803d", dash: "6 4" });
   }
+
+  const clear = () => {
+    setBase(null);
+    setShocked(null);
+  };
+
+  const loadDate = () =>
+    task("Loading Date Window & Simulating", async () => {
+      clear();
+      const w = await getWindow(date);
+      setWin(w);
+      const r = await simulate(w, null);
+      setBase(r);
+    });
+
+  const loadSample = (w: Window_) =>
+    task(`Simulating Archetype: ${w.label || w.id}`, async () => {
+      clear();
+      setWin(w);
+      const r = await simulate(w, null);
+      setBase(r);
+    });
+
+  const handleCustomJson = (file: File) =>
+    task("Loading Custom Window JSON", async () => {
+      const text = await file.text();
+      const w = JSON.parse(text) as Window_;
+      clear();
+      setWin(w);
+      const r = await simulate(w, null);
+      setBase(r);
+    });
+
+  const saveSnapshot = () => {
+    if (!base || !win) return;
+    const name = win.label || win.date || `Simulation ${snapshots.length + 1}`;
+    setSnapshots([
+      ...snapshots,
+      {
+        name,
+        time: new Date().toLocaleTimeString(),
+        run: base,
+        win,
+      },
+    ]);
+  };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-4 p-4">
-      <header><h1 className="text-2xl font-bold">Multiverse of Monsoon</h1>
-        <p className="text-sm text-slate-600">Climate digital twin of India. Outputs are model simulations, not official forecasts or warnings.</p></header>
-      {error && <div role="alert" className="rounded border border-red-400 bg-red-50 p-3 text-sm text-red-800">{error}</div>}
-      <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
-        <aside className={card}>
-          <fieldset disabled={!!busy} className="space-y-3">
-            <h2 className="font-semibold">Input window</h2>
-            {meta?.has_data ? <><label className="block text-sm">Last input day<input type="date" className={input} value={date} min="2005-01-03" max="2021-12-31" onChange={(e) => setDate(e.target.value)} /></label>
-              <button className={btn} onClick={loadDate}>Load and forecast</button>
-              <p className="text-xs text-slate-500">Dates up to 2017 are training data. 2018–2019 guided model choices. Only 2020–2021 was held out.</p></>
-              : <p className="text-xs text-slate-600">MONSOON_DATA is not set. Load a window JSON file instead.</p>}
-            <label className="block text-sm">Or load window JSON<input type="file" accept=".json" className={input}
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) f.text().then((t) => forecast(JSON.parse(t))).catch((x) => setError(String(x))); }} /></label>
-            <label className="block text-sm">Variable<select className={input} value={ch} onChange={(e) => setCh(+e.target.value)}>{CHANNELS.map((c, i) => <option key={c.id} value={i}>{c.label}</option>)}</select></label>
-            <h2 className="border-t pt-3 font-semibold">Multiverse Lab</h2>
-            <label className="block text-sm">Shock<select className={input} value={kind} onChange={(e) => setKind(e.target.value)}>
-              <option value="warm_ocean">Warm Bay of Bengal</option><option value="monsoon_stall">Monsoon stall (Arabian Sea)</option><option value="custom">Custom Gaussian</option></select></label>
-            {kind === "custom" && <div className="grid grid-cols-2 gap-2 text-xs">
-              <label className="col-span-2">Channel<select className={input} value={g.ch} onChange={(e) => setG({ ...g, ch: +e.target.value })}>{CHANNELS.map((c, i) => <option key={c.id} value={i}>{c.id}</option>)}</select></label>
-              {(["lat", "lon", "radius", "amp"] as const).map((k) => <label key={k}>{k === "amp" ? "amount (raw unit)" : k}<input type="number" className={input} value={g[k]} onChange={(e) => setG({ ...g, [k]: +e.target.value })} /></label>)}
-              <p className="col-span-2 text-slate-500">Raw units: K, mm/day, m/s, Pa, kg/m². Large shocks may be outside the training range.</p></div>}
-            <div className="flex flex-wrap gap-2"><button className={btn} disabled={!base} onClick={runShock}>Run shock</button>
-              <button className={btn} disabled={!shocked} onClick={certify}>Run certificate</button></div>
-          </fieldset>
-          <p aria-live="polite" className="mt-2 text-sm">{busy && `${busy}…`}</p>
-        </aside>
-        <main className="min-w-0 space-y-4">
-          {!base && <div className={card}>Load an input window to run a live 10-day forecast.</div>}
-          {base && meta && <>
-            <section className={card}>
-              <div className="mb-3 flex flex-wrap items-center gap-1">{Array.from({ length: 10 }, (_, i) => <button key={i} onClick={() => setDay(i + 1)} aria-pressed={day === i + 1}
-                className={`rounded px-2.5 py-1 text-sm ${day === i + 1 ? "bg-sky-700 text-white" : "bg-slate-100"}`}>Day {i + 1}</button>)}</div>
-              <div className="grid gap-3 md:grid-cols-3">{maps.map((m) => <GridMap key={m.title} {...m} unit={unit} land={meta.land_mask} cell={cell} onCell={setCell} />)}</div>
-              <p className="mt-2 text-xs text-slate-500">Black line: coarse land/sea boundary from the supplied mask. It is not a political boundary.</p>
-            </section>
-            <section className={card}><h2 className="mb-2 font-semibold">Cell {lat(cell[0])}°N, {lon(cell[1])}°E: {CHANNELS[ch].label}</h2><LineChart series={series} unit={unit} /></section>
-            {win?.truth?.[day - 1] && <section className={card}><h2 className="font-semibold">Truth vs Twin, day {day} (this window only)</h2>
-              <p className="text-sm">Latitude-weighted RMSE: model <b>{latRmse(shown(base.rollout[day - 1]), shown(win.truth[day - 1])).toFixed(2)}</b> {unit}; repeat-yesterday <b>{latRmse(shown(win.init_states[2]), shown(win.truth[day - 1])).toFixed(2)}</b> {unit}.</p></section>}
-            {cert && <section className={card}><h2 className="font-semibold">Shock Behaviour Certificate: {shocked?.label}</h2>
-              <ul className="text-sm">{cert.map(([n, ok, d]) => <li key={n}><b className={ok ? "text-green-700" : "text-red-700"}>{ok ? "PASS" : "FAIL"}</b> {n} <span className="text-slate-500">({d})</span></li>)}</ul>
-              <p className="mt-1 text-xs text-slate-500">These test model behaviour only. They do not show physical causality. Spread and amplitude limits are scored by evaluation/evaluate.py.</p></section>}
-            <footer className="text-xs text-slate-600">Baseline: {base.at}, inference {base.inference_ms.toFixed(0)} ms, round trip {base.wall_ms.toFixed(0)} ms.
-              {shocked && ` Shock "${shocked.label}": ${shocked.run.at}, inference ${shocked.run.inference_ms.toFixed(0)} ms.`}</footer>
-          </>}
-        </main>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* Top Navigation Bar */}
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-sm shadow-xs">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 font-black text-white shadow-sm">
+              M
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-base font-bold tracking-tight text-slate-900">
+                  Multiverse of Monsoon
+                </h1>
+                <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-800">
+                  DIGITAL TWIN v1.0
+                </span>
+              </div>
+              <p className="text-xs text-slate-500">
+                AI-Powered Climate Digital Twin of India & Autoregressive Perturbation Engine
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs">
+            {base && (
+              <div className="hidden rounded-lg bg-slate-100 px-3 py-1 font-mono text-slate-700 md:block">
+                Inference: <strong>{base.inference_ms.toFixed(0)} ms</strong> | Net: {base.wall_ms.toFixed(0)} ms
+              </div>
+            )}
+            <span className="flex items-center gap-1.5 font-semibold text-emerald-700">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Graded Model Ready
+            </span>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="mx-auto max-w-7xl px-4">
+          <nav className="flex space-x-1 overflow-x-auto py-1" aria-label="Tabs">
+            {navTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-semibold transition ${
+                  activeTab === tab.id
+                    ? "bg-sky-700 text-white shadow-xs"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                }`}
+              >
+                {tab.label}
+                {tab.badge && (
+                  <span
+                    className={`rounded px-1.5 py-0.2 text-[9px] font-bold ${
+                      activeTab === tab.id
+                        ? "bg-white/20 text-white"
+                        : "bg-amber-100 text-amber-800"
+                    }`}
+                  >
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <div className="mx-auto max-w-7xl p-4 lg:p-6">
+        {/* Error notification */}
+        {error && (
+          <div
+            role="alert"
+            className="mb-4 rounded-xl border border-rose-300 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-xs"
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Busy spinner banner */}
+        {busy && (
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-sky-300 bg-sky-50 px-4 py-2.5 text-xs font-semibold text-sky-800 shadow-xs">
+            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-sky-700 border-t-transparent" />
+            <span>{busy}…</span>
+          </div>
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+          {/* Left Sidebar Controls */}
+          <aside className="space-y-5">
+            {/* Window selection card */}
+            <div className={card}>
+              <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+                Atmosphere Initial State (Day 0)
+              </h2>
+
+              <fieldset disabled={!!busy} className="space-y-3">
+                {/* Sample Archetypes */}
+                {sampleWindows.length > 0 && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700">
+                      Pre-packaged Climate Archetypes:
+                    </label>
+                    <select
+                      className={input}
+                      value={selectedSample}
+                      onChange={(e) => {
+                        setSelectedSample(e.target.value);
+                        const found = sampleWindows.find((s) => s.id === e.target.value);
+                        if (found) loadSample(found);
+                      }}
+                    >
+                      {sampleWindows.map((sw) => (
+                        <option key={sw.id} value={sw.id}>
+                          {sw.label || sw.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* ERA5 Date picker if dataset available */}
+                {meta?.has_data ? (
+                  <div className="space-y-1 border-t border-slate-100 pt-3">
+                    <label className="text-xs font-semibold text-slate-700">
+                      ERA5 Historical Window Date:
+                    </label>
+                    <input
+                      type="date"
+                      className={input}
+                      value={date}
+                      min="2005-01-03"
+                      max="2021-12-31"
+                      onChange={(e) => setDate(e.target.value)}
+                    />
+                    <button className={`${btnPrimary} mt-1 w-full`} onClick={loadDate}>
+                      Load Date & Forecast
+                    </button>
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-slate-50 p-2.5 text-[11px] text-slate-500">
+                    MONSOON_DATA netCDF is not mounted. Using verified synthetic archetypes or load JSON.
+                  </div>
+                )}
+
+                {/* File Upload for custom JSON */}
+                <div className="space-y-1 border-t border-slate-100 pt-3">
+                  <label className="text-xs font-semibold text-slate-700">
+                    Upload Input Window JSON:
+                  </label>
+                  <input
+                    type="file"
+                    accept=".json"
+                    className="w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-2.5 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleCustomJson(f);
+                    }}
+                  />
+                </div>
+              </fieldset>
+            </div>
+
+            {/* Time Machine & Snapshots Card */}
+            <div className={card}>
+              <div className="mb-2 flex items-center justify-between border-b pb-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Climate Time Machine
+                </h3>
+                <button
+                  className="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-200 disabled:opacity-40"
+                  disabled={!base}
+                  onClick={saveSnapshot}
+                >
+                  + Snapshot
+                </button>
+              </div>
+
+              {snapshots.length === 0 ? (
+                <p className="text-xs text-slate-500">
+                  Save snapshot states to replay and compare simulation runs across different archetypes.
+                </p>
+              ) : (
+                <div className="space-y-1.5">
+                  {snapshots.map((s, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between rounded-lg bg-slate-50 p-2 text-xs"
+                    >
+                      <div>
+                        <span className="font-semibold text-slate-800">{s.name}</span>
+                        <span className="block text-[10px] text-slate-400">{s.time}</span>
+                      </div>
+                      <button
+                        className="rounded bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-800 hover:bg-sky-200"
+                        onClick={() => {
+                          setWin(s.win);
+                          setBase(s.run);
+                        }}
+                      >
+                        Replay
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Quick Status Info */}
+            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 text-xs text-slate-600">
+              <span className="font-bold text-slate-800">Model Architecture:</span>
+              <p className="mt-1">
+                MonsoonNet-lite (219 features, 2×128 layers). Operates on pure NumPy with 1-degree contract grid.
+              </p>
+            </div>
+          </aside>
+
+          {/* Center Main Tab View */}
+          <main className="min-w-0">
+            {activeTab === "timeline" && (
+              <TimelinePrimeView
+                meta={meta}
+                win={win}
+                base={base}
+                shocked={shocked}
+                ch={ch}
+                setCh={setCh}
+                day={day}
+                setDay={setDay}
+                cell={cell}
+                setCell={setCell}
+                selectedRegion={selectedRegion}
+                setSelectedRegion={setSelectedRegion}
+              />
+            )}
+
+            {activeTab === "shock_lab" && (
+              <ShockLabView
+                meta={meta}
+                win={win}
+                base={base}
+                shocked={shocked}
+                setShocked={setShocked}
+                day={day}
+                setDay={setDay}
+                cell={cell}
+                setCell={setCell}
+                task={task}
+                busy={busy}
+              />
+            )}
+
+            {activeTab === "atmosphere" && (
+              <AtmosphereView
+                meta={meta}
+                base={base}
+                shocked={shocked}
+                day={day}
+                setDay={setDay}
+                cell={cell}
+                setCell={setCell}
+              />
+            )}
+
+            {activeTab === "consequence" && (
+              <ConsequenceView
+                meta={meta}
+                base={base}
+                shocked={shocked}
+              />
+            )}
+
+            {activeTab === "ensemble_sens" && (
+              <EnsembleSensitivityView
+                win={win}
+                meta={meta}
+                task={task}
+                busy={busy}
+              />
+            )}
+
+            {activeTab === "reverse_mem" && (
+              <ReverseMemoryView
+                win={win}
+                meta={meta}
+                task={task}
+                busy={busy}
+              />
+            )}
+
+            {activeTab === "trust" && (
+              <TrustPanelView meta={meta} />
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );

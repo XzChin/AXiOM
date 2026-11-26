@@ -114,7 +114,20 @@ def scatter(GT, g, B, k):
     return np.stack([GT @ g[b * N:(b + 1) * N].reshape(N * k, NC) for b in range(B)])
 
 
-def rollout_train_step(net, opt, z, doy, t0, horizon, lr):
+def rollout_train_step(
+    net,
+    opt,
+    z,
+    doy,
+    t0,
+    horizon,
+    lr,
+    grad_weight=0.0,
+    heavy_rain_weight=0.0,
+    shock_weight=0.0,
+    rng=None,
+):
+    """Multi-step BPTT with optional Stage C (spatial gradient + heavy-rain) and Stage D (shock locality/bound) terms."""
     a = net.a
     B = len(t0)
     states = [z[t0 - 2], z[t0 - 1], z[t0]]
@@ -125,10 +138,51 @@ def rollout_train_step(net, opt, z, doy, t0, horizon, lr):
         out, cache = net.forward(x, keep=True)
         nxt = states[k + 2] + out.reshape(B, N, NC) * ratio + shift
         states.append(nxt)
-        l, g = huber(nxt - z[t0 + k + 1])
+        err = nxt - z[t0 + k + 1]
+        l, g = huber(err)
+        if heavy_rain_weight > 0:
+            w = np.ones_like(err)
+            w[..., 1] += heavy_rain_weight * np.maximum(z[t0 + k + 1, :, 1], 0.0)
+            l = l * w
+            g = g * w
+        if grad_weight > 0:
+            grid_e = err.reshape(B, 32, 36, NC)
+            dx = np.zeros_like(grid_e)
+            dy = np.zeros_like(grid_e)
+            dx[:, :, :-1] = grid_e[:, :, 1:] - grid_e[:, :, :-1]
+            dy[:, :-1, :] = grid_e[:, 1:, :] - grid_e[:, :-1, :]
+            g_sp = np.zeros_like(grid_e)
+            g_sp[:, :, :-1] -= dx[:, :, :-1]
+            g_sp[:, :, 1:] += dx[:, :, :-1]
+            g_sp[:, :-1, :] -= dy[:, :-1, :]
+            g_sp[:, 1:, :] += dy[:, :-1, :]
+            total += grad_weight * float((dx * dx + dy * dy).mean()) / horizon
+            g = g + grad_weight * g_sp.reshape(B, N, NC)
         total += l.mean() / horizon
         dloss.append(g / (g.size * horizon))
         caches.append((cache, out))
+
+    # Stage D paired shock stability/boundedness penalty
+    if shock_weight > 0 and rng is not None:
+        shock = np.zeros_like(states[2])
+        ci = rng.integers(0, NC)
+        cy, cx = rng.integers(4, 28), rng.integers(4, 32)
+        ii, jj = np.indices((32, 36))
+        mask = (np.exp(-((ii - cy) ** 2 + (jj - cx) ** 2) / (2 * 2.5 ** 2))).reshape(N)
+        shock[:, :, ci] = rng.choice([-1.0, 1.0]) * 1.5 * mask[None, :]
+        s_states = [states[0], states[1], states[2] + shock]
+        s_caches, s_dloss = [], []
+        for k in range(horizon):
+            sx = net.features(s_states[k], s_states[k + 1], s_states[k + 2], doy[t0 + k])
+            sout, scache = net.forward(sx, keep=True)
+            snxt = s_states[k + 2] + sout.reshape(B, N, NC) * ratio + shift
+            s_states.append(snxt)
+            delta = snxt - states[k + 3]
+            over = np.maximum(np.abs(delta) - 4.0, 0.0) * np.sign(delta)
+            total += shock_weight * float((over * over).mean()) / horizon
+            s_dloss.append(shock_weight * over / (over.size * horizon))
+            s_caches.append((scache, sout))
+
     grads = {k: np.zeros_like(v) for k, v in opt.p.items()}
     adj = [np.zeros_like(states[0]) for _ in states]
     for k in range(horizon - 1, -1, -1):
@@ -151,7 +205,7 @@ def rollout_train_step(net, opt, z, doy, t0, horizon, lr):
     return float(total)
 
 
-def fit(net, z, doy, years, train_end, iters_a, stage_b, seed=0):
+def fit(net, z, doy, years, train_end, iters_a, stage_b, seed=0, stage_c_iters=0, stage_d_iters=0):
     rng = np.random.default_rng(seed)
     a = net.a
     params = {k: a[k] for k in a if k == "skip" or (k[0] in "wb" and k[1:].isdigit())}
@@ -176,6 +230,20 @@ def fit(net, z, doy, years, train_end, iters_a, stage_b, seed=0):
             l = rollout_train_step(net, opt, z, doy, starts, horizon, lr * (1 - 0.7 * it / iters))
             if it % 100 == 0:
                 print(f"B h={horizon} {it} loss {l:.4f} {time.time() - t0:.0f}s", flush=True)
+    if stage_c_iters > 0:
+        opt = Adam(params, wd=1e-5)
+        for it in range(stage_c_iters):
+            starts = rng.integers(2, valid[-1] - 8, 4)
+            l = rollout_train_step(net, opt, z, doy, starts, 8, 8e-5, grad_weight=0.15, heavy_rain_weight=0.5)
+            if it % 100 == 0:
+                print(f"C {it} loss {l:.4f} {time.time() - t0:.0f}s", flush=True)
+    if stage_d_iters > 0:
+        opt = Adam(params, wd=1e-5)
+        for it in range(stage_d_iters):
+            starts = rng.integers(2, valid[-1] - 8, 4)
+            l = rollout_train_step(net, opt, z, doy, starts, 8, 6e-5, shock_weight=0.25, rng=rng)
+            if it % 100 == 0:
+                print(f"D {it} loss {l:.4f} {time.time() - t0:.0f}s", flush=True)
 
 
 if __name__ == "__main__":
@@ -185,6 +253,8 @@ if __name__ == "__main__":
     ap.add_argument("--train-end", type=int, default=2017)
     ap.add_argument("--iters", type=int, default=12000)
     ap.add_argument("--rollout", default="2:500:3e-4,4:500:2e-4,8:400:1e-4", help="horizon:iterations:lr,...")
+    ap.add_argument("--stage-c", type=int, default=0, help="Stage C sharpness/heavy-rain iterations")
+    ap.add_argument("--stage-d", type=int, default=0, help="Stage D shock fine-tune iterations")
     ap.add_argument("--width", type=int, default=128)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
@@ -192,7 +262,7 @@ if __name__ == "__main__":
     art.update(init_params(np.random.default_rng(args.seed), args.width))
     net = Net(art)
     plan = [(int(h), int(i), float(l)) for h, i, l in (s.split(":") for s in args.rollout.split(",") if s)]
-    fit(net, z, doy, years, args.train_end, args.iters, plan, args.seed)
+    fit(net, z, doy, years, args.train_end, args.iters, plan, args.seed, args.stage_c, args.stage_d)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(args.out, **net.a)
     meta = {k: getattr(args, k) for k in ("train_end", "iters", "rollout", "width", "seed")}
