@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { Meta, Run } from "../api";
 import { GridMap } from "./GridMap";
 import { LineChart, Series } from "./LineChart";
-import { Grid, State, lat, lon, moistureTransport, monsoonPulse, pressureAnomaly, windSpeed } from "../utils/science";
+import { Grid, State, moistureTransport, monsoonPulse, pressureAnomaly, windSpeed } from "../utils/science";
+import { palette, ui } from "../theme";
 
 interface Props {
   meta: Meta | null;
@@ -13,8 +14,6 @@ interface Props {
   cell: [number, number];
   setCell: (c: [number, number]) => void;
 }
-
-const card = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
 
 export function AtmosphereView({
   meta, base, shocked, day, setDay, cell, setCell,
@@ -61,7 +60,7 @@ export function AtmosphereView({
 
     const list = [
       {
-        title: `${layerInfo.name} — Baseline Day +${day} (DERIVED)`,
+        title: `${layerInfo.name} — Baseline Day +${day} [Derived]`,
         grid: currentGrid,
         range,
         diverging: layerInfo.diverging,
@@ -70,7 +69,7 @@ export function AtmosphereView({
 
     if (shockGrid) {
       list.push({
-        title: `${layerInfo.name} — Shocked Day +${day} (DERIVED)`,
+        title: `${layerInfo.name} — Shocked Day +${day} [Derived]`,
         grid: shockGrid,
         range,
         diverging: layerInfo.diverging,
@@ -91,31 +90,31 @@ export function AtmosphereView({
 
   const pulseSeries: Series[] = [];
   if (pulseBaseline.length > 0) {
-    pulseSeries.push({ name: "Baseline Monsoon Zonal Pulse", values: pulseBaseline, color: "#0284c7" });
+    pulseSeries.push({ name: "Baseline Monsoon Pulse [Derived]", values: pulseBaseline, color: "#5F93B5" });
   }
   if (pulseShocked.length > 0) {
-    pulseSeries.push({ name: "Shocked Monsoon Pulse", values: pulseShocked, color: "#ea580c" });
+    pulseSeries.push({ name: "Shocked Monsoon Pulse [Derived]", values: pulseShocked, color: palette.accent });
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Layer selector bar */}
-      <div className={`${card} flex flex-wrap items-center justify-between gap-4`}>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-2 text-xs font-bold text-slate-600">Atmosphere Layer:</span>
+      <div className={`${ui.card} flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-steel-400`}>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={ui.titleSm}>Atmospheric Diagnostic:</span>
           {[
             { id: "wind_speed", label: "Wind Speed (|V|)" },
             { id: "pressure_anom", label: "Pressure Anomaly (ΔP)" },
-            { id: "moisture_transport", label: "Moisture Transport Flux" },
+            { id: "moisture_transport", label: "Moisture Flux" },
             { id: "orography", label: "Static Orography" },
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => setLayer(item.id as any)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
                 layer === item.id
-                  ? "bg-sky-700 text-white shadow-sm"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  ? "bg-steel-500 text-text-bright shadow-sm"
+                  : "bg-twilight-raised text-text-main hover:bg-twilight-hover"
               }`}
             >
               {item.label}
@@ -124,14 +123,16 @@ export function AtmosphereView({
         </div>
 
         {layer !== "orography" && (
-          <div className="flex items-center gap-1">
-            <span className="mr-1 text-xs font-bold text-slate-600">Day:</span>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className={ui.titleSm}>Lead Day:</span>
             {Array.from({ length: 10 }, (_, i) => (
               <button
                 key={i}
                 onClick={() => setDay(i + 1)}
-                className={`rounded px-2.5 py-1 text-xs font-semibold ${
-                  day === i + 1 ? "bg-sky-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                className={`rounded-lg px-2.5 py-1 text-xs font-bold tabular-nums transition ${
+                  day === i + 1
+                    ? "bg-teal-500 text-steel-950"
+                    : "bg-twilight-raised text-text-muted hover:bg-twilight-hover"
                 }`}
               >
                 +{i + 1}
@@ -143,17 +144,20 @@ export function AtmosphereView({
 
       {/* Spatial Maps */}
       {currentGrid ? (
-        <div className={card}>
-          <div className="mb-3 flex items-center justify-between border-b pb-2">
-            <h3 className="font-bold text-slate-800">
-              {layerInfo.name} Spatial Distribution
-            </h3>
-            <span className="rounded bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-800">
+        <div className={ui.cardRaised}>
+          <div className={ui.cardHeader}>
+            <div>
+              <h3 className={ui.titleLg}>
+                {layerInfo.name} Spatial Distribution [Derived]
+              </h3>
+              <p className={ui.muted}>Physical dynamic diagnostic calculated from atmospheric rollout states</p>
+            </div>
+            <span className={ui.badgeAccent}>
               Unit: {layerInfo.unit}
             </span>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {mapList.map((m) => (
               <GridMap
                 key={m.title}
@@ -167,46 +171,46 @@ export function AtmosphereView({
           </div>
         </div>
       ) : (
-        <div className={`${card} text-center text-sm text-slate-500`}>
-          Load an input window in Timeline Prime to view derived atmospheric fields.
+        <div className={`${ui.card} py-14 text-center text-sm text-text-muted`}>
+          Load an initial forecast window to calculate derived atmospheric diagnostics.
         </div>
       )}
 
       {/* Monsoon Pulse Diagnostic */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        <div className={card}>
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-bold text-slate-800">
-              Monsoon Pulse Index — Kinetic Onset Diagnostic
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className={ui.card}>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <h3 className={ui.titleMd}>
+              Monsoon Pulse Index — Kinetic Onset Diagnostic [Derived]
             </h3>
-            <span className="rounded bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-800">
+            <span className={ui.badgePrimary}>
               PHYSICAL DIAGNOSTIC
             </span>
           </div>
-          <p className="mb-2 text-xs text-slate-600">
-            Domain-averaged lower-tropospheric zonal wind (u10) across Arabian Sea & Central India [10–25°N, 70–90°E]. Onset typically manifests as sustained westerlies &gt; 5–6 m/s.
+          <p className="mb-3 text-xs leading-relaxed text-text-muted">
+            Domain-averaged lower-tropospheric zonal wind (u10) across Arabian Sea &amp; Central India [10–25°N, 70–90°E]. Onset typically manifests as sustained westerlies &gt; 5–6 m/s.
           </p>
           <LineChart series={pulseSeries} unit="m/s" />
         </div>
 
-        <div className={card}>
-          <h3 className="mb-2 font-bold text-slate-800">Diagnostic Interpretations</h3>
-          <div className="space-y-3 text-xs text-slate-700">
-            <div className="rounded-lg bg-slate-50 p-3">
-              <span className="font-bold text-sky-900">Moisture Transport Jet (Findlater Jet):</span>
-              <p className="mt-1 text-slate-600">
+        <div className={ui.card}>
+          <h3 className={`mb-3 ${ui.titleMd}`}>Meteorological Diagnostic Notes</h3>
+          <div className="space-y-3 text-xs text-text-main">
+            <div className="rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5">
+              <span className="font-bold text-teal-300">Moisture Transport Jet (Findlater Jet):</span>
+              <p className="mt-1 leading-relaxed text-text-muted">
                 Strong low-level cross-equatorial southwesterly flow transports precipitable water vapor from the Arabian Sea across the Western Ghats into central India.
               </p>
             </div>
-            <div className="rounded-lg bg-slate-50 p-3">
-              <span className="font-bold text-indigo-900">Monsoon Trough Pressure Anomaly:</span>
-              <p className="mt-1 text-slate-600">
+            <div className="rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5">
+              <span className="font-bold text-steel-200">Monsoon Trough Pressure Anomaly:</span>
+              <p className="mt-1 leading-relaxed text-text-muted">
                 Negative pressure anomalies along the Indo-Gangetic Plain and northern Bay of Bengal signal active monsoon trough depressions that steer rainfall clusters.
               </p>
             </div>
-            <div className="rounded-lg bg-slate-50 p-3">
-              <span className="font-bold text-emerald-900">Orographic Triggering:</span>
-              <p className="mt-1 text-slate-600">
+            <div className="rounded-xl border border-twilight-border bg-twilight-base/80 p-3.5">
+              <span className="font-bold text-teal-400">Orographic Triggering:</span>
+              <p className="mt-1 leading-relaxed text-text-muted">
                 Elevated terrain along the Western Ghats and Himalayan foothills generates intense mechanical lifting, driving localized heavy precipitation.
               </p>
             </div>
