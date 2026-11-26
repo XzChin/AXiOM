@@ -228,11 +228,11 @@ export function App() {
       {showIntro && <IntroSplash onDone={dismissIntro} />}
       <div className="app-shell min-h-screen bg-twilight-bg text-text-main selection:bg-teal-500/30 selection:text-teal-200">
       {/* Header & Atmospheric Top-Bar */}
-      <header className="sticky top-0 z-30 border-b border-twilight-border bg-twilight-surface/95 backdrop-blur-md shadow-md">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-twilight-border bg-twilight-surface">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
           {/* Logo & Subtitle */}
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-steel-500 to-steel-700 text-text-bright shadow-sm border border-steel-400/40">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-steel-600 text-text-bright border border-steel-400/30">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.3" aria-hidden="true">
                 <path d="M3 15c2.5-2 5-2 7.5 0s5 2 7.5 0 3-1 3-1" strokeLinecap="round" />
                 <path d="M3 10c2.5-2 5-2 7.5 0s5 2 7.5 0 3-1 3-1" strokeLinecap="round" opacity="0.65" />
@@ -301,13 +301,13 @@ export function App() {
         {/* Navigation Bar */}
         <div className="border-t border-twilight-border bg-twilight-base/80">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
-            <nav className="flex space-x-1 py-1.5 overflow-x-auto" aria-label="Main Navigation">
+            <nav className="flex space-x-1 py-1 overflow-x-auto" aria-label="Main Navigation">
               {/* Forecast */}
               <button
                 onClick={() => setActiveTab("forecast")}
-                className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                   activeTab === "forecast"
-                    ? "bg-steel-500 text-text-bright shadow-sm"
+                    ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                     : "text-text-muted hover:bg-twilight-hover hover:text-text-bright"
                 }`}
               >
@@ -317,9 +317,9 @@ export function App() {
               {/* Scenario Lab */}
               <button
                 onClick={() => setActiveTab("shock_lab")}
-                className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                   activeTab === "shock_lab"
-                    ? "bg-teal-500 text-steel-950 shadow-sm font-extrabold"
+                    ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                     : "text-text-muted hover:bg-twilight-hover hover:text-text-bright"
                 }`}
               >
@@ -336,15 +336,15 @@ export function App() {
               {/* Explore */}
               <button
                 onClick={() => setActiveTab("explore")}
-                className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                   activeTab === "explore"
-                    ? "bg-steel-500 text-text-bright shadow-sm"
+                    ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                     : "text-text-muted hover:bg-twilight-hover hover:text-text-bright"
                 }`}
               >
                 <span>Explore</span>
                 <span className={`rounded-full px-1.5 py-0.2 text-[9px] font-semibold ${
-                  activeTab === "explore" ? "bg-steel-700 text-text-bright" : "bg-twilight-raised text-text-subtle"
+                  activeTab === "explore" ? "bg-[#142136] text-[#75472F]" : "bg-[#142136] text-[#75472F]"
                 }`}>
                   3 Tools
                 </span>
@@ -353,14 +353,14 @@ export function App() {
               {/* Consequence / Impact Proxies */}
               <button
                 onClick={() => setActiveTab("consequence")}
-                className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                   activeTab === "consequence"
-                    ? "bg-steel-500 text-text-bright shadow-sm"
+                    ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                     : "text-text-muted hover:bg-twilight-hover hover:text-text-bright"
                 }`}
               >
                 <span>Impact Proxies</span>
-                <span className="rounded-full bg-amber-500/20 border border-amber-400/50 px-1.5 py-0.2 text-[9px] font-bold text-amber-300">
+                <span className="rounded-full bg-amber-500/20 border border-amber-400/50 px-1.5 py-0.2 text-[9px] font-bold text-[#FCD34D]">
                   Proxy
                 </span>
               </button>
@@ -368,9 +368,9 @@ export function App() {
               {/* Model & Trust */}
               <button
                 onClick={() => setActiveTab("trust")}
-                className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                   activeTab === "trust"
-                    ? "bg-steel-500 text-text-bright shadow-sm"
+                    ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                     : "text-text-muted hover:bg-twilight-hover hover:text-text-bright"
                 }`}
               >
@@ -382,7 +382,7 @@ export function App() {
       </header>
 
       {/* Main Container */}
-      <div className="mx-auto max-w-[1600px] px-4 pb-10 pt-5 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1600px] px-4 pb-6 pt-3 sm:px-6 lg:px-8">
         {/* Error notification banner */}
         {error && (
           <div
@@ -430,7 +430,9 @@ export function App() {
 
         <div className={`workspace-layout grid gap-6 ${activeTab === "forecast" || activeTab === "shock_lab" ? "lg:grid-cols-[300px_minmax(0,1fr)]" : "lg:grid-cols-[280px_minmax(0,1fr)]"}`}>
           {/* Left Sidebar: Unified Single Card Input & Time Machine */}
-          <aside className="space-y-6">
+          <details className="workspace-settings">
+            <summary>Data &amp; Initial Conditions <span>Open settings</span></summary>
+            <aside className="space-y-6">
             {/* Single Unified Atmosphere Initial State Card */}
             <div className={ui.card}>
               <h2 className="mb-3.5 text-xs font-bold uppercase tracking-wider text-teal-400">
@@ -492,7 +494,9 @@ export function App() {
                     Upload Input Window JSON:
                   </label>
                   <p className="text-[11px] leading-relaxed text-text-subtle">
-                    Requires init_states (3 × 6 × 32 × 36) and doy_sincos. Model stats files cannot be simulated.
+                    Requires init_states (3 frames x 6 channels x 32 x 36 values)
+                    and doy_sincos (2 numbers). A normalization stats file containing
+                    only mean/std is not an input window.
                   </p>
                   <input
                     type="file"
@@ -560,6 +564,7 @@ export function App() {
               </p>
             </div>
           </aside>
+          </details>
 
           {/* Central Main Workspaces */}
           <main className="min-w-0">
@@ -602,14 +607,14 @@ export function App() {
             {activeTab === "explore" && (
               <div className="space-y-6">
                 {/* Explore Tool Switcher Bar */}
-                <div className={`${ui.card} flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-teal-400`}>
+                <div className={`${ui.card} flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-[#A66A45]`}>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className={ui.titleSm}>Explore Tool:</span>
                     <button
                       onClick={() => setExploreTab("ensemble_sens")}
                       className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
                         exploreTab === "ensemble_sens"
-                          ? "bg-teal-500 text-steel-950 shadow-sm"
+                          ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                           : "bg-twilight-raised text-text-main hover:bg-twilight-hover"
                       }`}
                     >
@@ -619,7 +624,7 @@ export function App() {
                       onClick={() => setExploreTab("reverse_mem")}
                       className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
                         exploreTab === "reverse_mem"
-                          ? "bg-teal-500 text-steel-950 shadow-sm"
+                          ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                           : "bg-twilight-raised text-text-main hover:bg-twilight-hover"
                       }`}
                     >
@@ -629,7 +634,7 @@ export function App() {
                       onClick={() => setExploreTab("atmosphere")}
                       className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
                         exploreTab === "atmosphere"
-                          ? "bg-teal-500 text-steel-950 shadow-sm"
+                          ? "bg-[#1D2A3E] text-[#FFFEFA] shadow-sm"
                           : "bg-twilight-raised text-text-main hover:bg-twilight-hover"
                       }`}
                     >

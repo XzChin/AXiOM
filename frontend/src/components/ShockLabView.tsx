@@ -26,6 +26,8 @@ export function ShockLabView({
   const [ch, setCh] = useState(1); // default to rainfall
   const [g, setG] = useState({ ch: 0, lat: 15, lon: 88, radius: 3, amp: 2.5 });
   const [cert, setCert] = useState<CertResult | null>(null);
+  const [showCert, setShowCert] = useState(false);
+  const [selectedMap, setSelectedMap] = useState(0);
 
   const makeDelta = (): State => {
     if (kind === "zero") return zeros();
@@ -37,6 +39,7 @@ export function ShockLabView({
     if (!win) return;
     const delta = makeDelta();
     setCert(null);
+    setShowCert(false);
     const label =
       kind === "zero"
         ? "Zero / Null Shock"
@@ -53,6 +56,7 @@ export function ShockLabView({
     if (!win || !shocked) return;
     const certRes = await runCertificate(win, shocked.delta);
     setCert(certRes);
+    setShowCert(true);
   });
 
   const unit = CHANNELS[ch].unit;
@@ -130,17 +134,17 @@ export function ShockLabView({
     : [];
 
   return (
-    <div className="space-y-6">
+    <div className="scenario-lab space-y-6">
       {/* Shock Controls: Located right above the comparison maps */}
-      <div className={`${ui.cardRaised} border-l-4 border-l-teal-400`}>
+      <div className={`${ui.cardRaised} scenario-controls`}>
         <div className={ui.cardHeader}>
           <div>
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
-              <h2 className={ui.titleLg}>Multiverse Scenario Lab &amp; Perturbation Engine</h2>
+              <span className="h-2 w-2 rounded-full bg-[#A66A45]" />
+              <h2 className={ui.titleLg}>Scenario configuration</h2>
             </div>
             <p className={ui.muted}>
-              Apply bounded climate anomalies to Day-0 initial atmosphere and trace non-linear downstream cascades.
+              Define an atmospheric perturbation, run a parallel rollout, and compare its downstream effects against the control.
             </p>
           </div>
           <span className={ui.badgeAccent}>
@@ -148,7 +152,7 @@ export function ShockLabView({
           </span>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div className="space-y-1">
             <label className={ui.label}>Shock Archetype:</label>
             <select
@@ -232,7 +236,7 @@ export function ShockLabView({
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
+        <div className="scenario-actions mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-twilight-border pt-3.5">
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               className={ui.btnAccent}
@@ -244,13 +248,13 @@ export function ShockLabView({
             <button
               className={ui.btnSecondary}
               disabled={!shocked || !!busy}
-              onClick={handleRunCertificate}
+              onClick={cert ? () => setShowCert(true) : handleRunCertificate}
             >
-              Run 8-Check Behaviour Certificate
+              {cert ? "View behaviour audit" : "Run behaviour audit"}
             </button>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-semibold text-text-muted">Display Channel:</span>
+            <span className="font-semibold text-text-muted">Map variable:</span>
             <select
               className={ui.selectInline}
               value={ch}
@@ -266,16 +270,16 @@ export function ShockLabView({
 
       {/* Tri-Panel Comparison Grid: Baseline vs Scenario vs Difference */}
       {base && shocked ? (
-        <div className={ui.card}>
+        <div className={`${ui.card} scenario-comparison`}>
           <div className={ui.cardHeader}>
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className={ui.titleSm}>Lead Day:</span>
+            <div className="scenario-day-selector flex flex-wrap items-center gap-1.5">
+              <span className={ui.titleSm}>Forecast lead</span>
               {Array.from({ length: 10 }, (_, i) => (
                 <button
                   key={i}
                   onClick={() => setDay(i + 1)}
                   className={`rounded-xl px-3 py-1.5 text-xs font-bold tabular-nums transition ${
-                    day === i + 1 ? "bg-teal-500 text-steel-900 shadow-sm" : "bg-twilight-base text-text-main hover:bg-twilight-hover"
+                    day === i + 1 ? "scenario-day-active" : "scenario-day-idle"
                   }`}
                 >
                   +{i + 1}
@@ -283,21 +287,43 @@ export function ShockLabView({
               ))}
             </div>
             <span className={ui.badgeAccent}>
-              Active Scenario: {shocked.label}
+              SCENARIO · {shocked.label}
             </span>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            {maps.map((m) => (
-              <GridMap
-                key={m.title}
-                {...m}
-                unit={unit}
-                land={meta?.land_mask || []}
-                cell={cell}
-                onCell={setCell}
-              />
-            ))}
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Map comparison view">
+                {["Baseline", "Scenario", "Delta"].map((label, index) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setSelectedMap(index)}
+                    aria-pressed={selectedMap === index}
+                    className={`rounded-lg px-4 py-2 text-xs font-semibold transition ${
+                      selectedMap === index
+                        ? "bg-[#A66A45] text-white"
+                        : "border border-[#DED6C9] bg-[#FFFEFA] text-[#5A4634] hover:bg-[#F0E9DD]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <span className="text-xs text-text-muted">32 x 36 spatial grid</span>
+            </div>
+            {maps[selectedMap] && (
+              <div className="mx-auto w-full max-w-[720px] rounded-xl border border-[#DED6C9] bg-[#FFFEFA] p-3 sm:p-4">
+                <GridMap
+                  key={maps[selectedMap].title}
+                  {...maps[selectedMap]}
+                  unit={unit}
+                  land={meta?.land_mask || []}
+                  cell={cell}
+                  onCell={setCell}
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -352,8 +378,8 @@ export function ShockLabView({
       )}
 
       {/* Shock Behaviour Certificate Panel */}
-      {cert && (
-        <div className="rounded-2xl border border-teal-500/50 bg-teal-950/20 p-5 shadow-md">
+      {cert && showCert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4" onClick={() => setShowCert(false)}><div role="dialog" aria-modal="true" aria-label="Shock Behaviour Certificate" className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-[#FFFEFA] p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}><div className="rounded-2xl border border-[#DED6C9] bg-[#FFFEFA] p-5 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-twilight-border pb-3.5">
             <div>
               <h3 className={ui.titleMd}>
@@ -370,6 +396,7 @@ export function ShockLabView({
             }`}>
               {cert.passed_count} / {cert.total_checks} CHECKS PASSED
             </span>
+            <button type="button" onClick={() => setShowCert(false)} className="rounded-lg border border-[#DED6C9] px-3 py-1.5 text-xs font-semibold text-[#29364A] transition hover:bg-[#F0E9DD]">Close</button>
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -401,6 +428,8 @@ export function ShockLabView({
             Audit verified via live inference in {cert.inference_ms.toFixed(0)} ms.
           </div>
         </div>
+      </div>
+    </div>
       )}
     </div>
   );
