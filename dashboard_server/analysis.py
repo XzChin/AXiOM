@@ -76,10 +76,10 @@ def run_certificate(init_states: Any, doy_sincos: list[float], perturbation: Any
     zeros = np.zeros((NC, NLAT, NLON), dtype=np.float32)
 
     base, ms_base = _call_simulate(init_states, doy_sincos, steps, None)
-    zero_out, _ = _call_simulate(init_states, doy_sincos, steps, zeros.tolist())
-    run1, ms_shock = _call_simulate(init_states, doy_sincos, steps, pert.tolist())
-    run2, _ = _call_simulate(init_states, doy_sincos, steps, pert.tolist())
-    half_run, _ = _call_simulate(init_states, doy_sincos, steps, (0.5 * pert).tolist())
+    zero_out, ms_zero = _call_simulate(init_states, doy_sincos, steps, zeros.tolist())
+    run1, ms_shock1 = _call_simulate(init_states, doy_sincos, steps, pert.tolist())
+    run2, ms_shock2 = _call_simulate(init_states, doy_sincos, steps, pert.tolist())
+    half_run, ms_half = _call_simulate(init_states, doy_sincos, steps, (0.5 * pert).tolist())
 
     zero_diff = float(np.max(np.abs(zero_out - base)))
     repeat_diff = float(np.max(np.abs(run1 - run2)))
@@ -133,7 +133,8 @@ def run_certificate(init_states: Any, doy_sincos: list[float], perturbation: Any
         {"id": "approximate_scaling", "name": "Approximate scaling (0.5x probe)", "passed": 0.2 <= ratio <= 0.8 if n1 > 1e-9 else False, "detail": f"0.5x/1.0x norm ratio = {ratio:.3f}"},
         {"id": "determinism", "name": "Deterministic repeatability", "passed": repeat_diff == 0.0, "detail": f"max |run1 - run2| = {repeat_diff:.3e}"},
     ]
-    return {"checks": checks, "passed_count": sum(1 for c in checks if c["passed"]), "total_checks": 8, "inference_ms": ms_base + ms_shock}
+    total_inference_ms = ms_base + ms_zero + ms_shock1 + ms_shock2 + ms_half
+    return {"checks": checks, "passed_count": sum(1 for c in checks if c["passed"]), "total_checks": 8, "inference_ms": total_inference_ms}
 
 
 def run_ensemble(init_states: Any, doy_sincos: list[float], steps: int = 10, members: int = 5, noise_scale: float = 0.05) -> dict:
@@ -225,16 +226,19 @@ def run_reverse_simulator(
     base_val = float(base[target_day - 1, target_channel][rmask].mean())
     total_ms = ms0
 
-    # Constrained candidate grid (max 12 evaluations to keep CPU fast)
-    candidates = []
-    for ch, amps in ((0, [2.5, -2.5]), (5, [8.0, -8.0]), (2, [3.0, -3.0])):
-        for clat, clon in ((clat0, clon0), (14.0, 88.0), (14.0, 70.0)):
-            if len(candidates) >= 12:
-                break
-            for amp in amps:
-                if len(candidates) >= 12:
-                    break
-                candidates.append((ch, clat, clon, 3.5, amp))
+    # Balanced candidate grid: four probes per source channel, 12 evaluations total.
+    # Each channel gets two locations and both positive and negative amplitudes.
+    candidate_specs = (
+        (0, ((clat0, clon0), (14.0, 88.0)), 2.5),  # t2m, K
+        (5, ((clat0, clon0), (14.0, 88.0)), 8.0),  # tcwv, kg/m^2
+        (2, ((clat0, clon0), (14.0, 70.0)), 3.0),  # u10, m/s
+    )
+    candidates = [
+        (ch, clat, clon, 3.5, amp)
+        for ch, locations, magnitude in candidate_specs
+        for clat, clon in locations
+        for amp in (magnitude, -magnitude)
+    ]
 
     best = None
     sign = 1.0 if direction == "increase" else -1.0

@@ -4,12 +4,14 @@ import {
   Run,
   Window_,
   getMeta,
+  getModelHealth,
   getSampleWindows,
   getWindow,
   simulate,
 } from "./api";
 import { RegionId } from "./utils/india";
 import { State } from "./utils/science";
+import { validateWindow } from "./utils/windowValidation";
 
 // Sub-views
 import { TimelinePrimeView } from "./components/TimelinePrimeView";
@@ -64,9 +66,14 @@ export function App() {
 
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const [modelStatus, setModelStatus] = useState<"checking" | "ready" | "offline">("checking");
 
   // Initial load
   useEffect(() => {
+    getModelHealth()
+      .then((health) => setModelStatus(health.status === "ready" ? "ready" : "offline"))
+      .catch(() => setModelStatus("offline"));
+
     getMeta()
       .then((m) => {
         setMeta(m);
@@ -120,10 +127,11 @@ export function App() {
   const handleCustomJson = (file: File) =>
     task("Loading Custom Window JSON", async () => {
       const text = await file.text();
-      const w = JSON.parse(text) as Window_;
+      const parsed: unknown = JSON.parse(text);
+      validateWindow(parsed);
+      const r = await simulate(parsed, null);
       clear();
-      setWin(w);
-      const r = await simulate(w, null);
+      setWin(parsed);
       setBase(r);
     });
 
@@ -171,9 +179,25 @@ export function App() {
                 Inference: <strong>{base.inference_ms.toFixed(0)} ms</strong> | Net: {base.wall_ms.toFixed(0)} ms
               </div>
             )}
-            <span className="flex items-center gap-1.5 font-semibold text-emerald-700">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Graded Model Ready
+            <span className={`flex items-center gap-1.5 font-semibold ${
+              modelStatus === "ready"
+                ? "text-emerald-700"
+                : modelStatus === "offline"
+                  ? "text-rose-700"
+                  : "text-slate-500"
+            }`}>
+              <span className={`h-2 w-2 rounded-full ${
+                modelStatus === "ready"
+                  ? "bg-emerald-500"
+                  : modelStatus === "offline"
+                    ? "bg-rose-500"
+                    : "bg-slate-400 animate-pulse"
+              }`} />
+              {modelStatus === "ready"
+                ? "Model Ready"
+                : modelStatus === "offline"
+                  ? "Model Offline"
+                  : "Checking Model..."}
             </span>
           </div>
         </div>
