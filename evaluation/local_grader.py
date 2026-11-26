@@ -215,17 +215,25 @@ def main() -> int:
             c = np.stack([kit_stats.clim_for(clim, dates[t + k]) for k in range(1, 11)])
             P.append(out[L]); T.append(true[L]); Cl.append(c[L]); Pe.append(np.repeat(data[t][None], 3, 0))
             ratios.append(S.variance_ratio(out[7], true[7]))
-        P, T, Pe, Cl = map(np.stack, (P, T, Pe, Cl))
-        sk = [S.skill_vs_best_ref(P[i], T[i], Pe[i], Cl[i]) for i in range(len(starts))]
-        res = {
-            "mode": "era5_dataset",
-            "years": args.years,
-            "windows": len(starts),
-            "invalid_windows": invalid,
-            "mean_window_skill": float(np.nanmean([s["ss"] for s in sk])),
-            "day8_variance_ratio": [round(float(v), 3) for v in np.nanmean(ratios, 0)],
-            "anti_blur_points": float(S.anti_blur_points(np.stack(ratios))),
-        }
+        if not starts:
+            res = {
+                "mode": "era5_dataset",
+                "years": args.years,
+                "windows": 0,
+                "message": "No eligible evaluation windows found for the requested years in this dataset."
+            }
+        else:
+            P, T, Pe, Cl = map(np.stack, (P, T, Pe, Cl))
+            sk = [S.skill_vs_best_ref(P[i], T[i], Pe[i], Cl[i]) for i in range(len(starts))]
+            res = {
+                "mode": "era5_dataset",
+                "years": args.years,
+                "windows": len(starts),
+                "invalid_windows": invalid,
+                "mean_window_skill": float(np.nanmean([s["ss"] for s in sk])),
+                "day8_variance_ratio": [round(float(v), 3) for v in np.nanmean(ratios, 0)],
+                "anti_blur_points": float(S.anti_blur_points(np.stack(ratios))),
+            }
 
     txt = json.dumps(res, indent=2)
     print(txt)

@@ -1,4 +1,25 @@
-# Starts the model server (8000) and dashboard (8080). Optional: $env:MONSOON_DATA="C:\path\india_climate_train.nc"
-Set-Location (Join-Path $PSScriptRoot "..")
-$model = Start-Process python -ArgumentList "serve.py","--port","8000" -PassThru -NoNewWindow
-try { python -m dashboard_server.app } finally { Stop-Process -Id $model.Id }
+﻿$ErrorActionPreference = "Stop"
+
+$root = Split-Path -Parent $PSScriptRoot
+Set-Location $root
+
+$python = Join-Path $root ".venv\Scripts\python.exe"
+
+if (-not (Test-Path $python)) {
+    throw "Virtual environment Python not found: $python"
+}
+
+Write-Host "Starting AXiOM model server..." -ForegroundColor Cyan
+$model = Start-Process -FilePath $python `
+    -ArgumentList @("serve.py", "--port", "8000") `
+    -PassThru -NoNewWindow
+
+try {
+    Write-Host "Starting AXiOM dashboard..." -ForegroundColor Cyan
+    & $python -m dashboard_server.app
+}
+finally {
+    if ($model -and -not $model.HasExited) {
+        Stop-Process -Id $model.Id -Force -ErrorAction SilentlyContinue
+    }
+}

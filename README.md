@@ -2,9 +2,9 @@
 
 [![Repo Scan](https://img.shields.io/badge/Repo%20Scan-15%2F15%20Points-emerald)](.)
 [![Schema Validator](https://img.shields.io/badge/Schema%20Validator-Passed-brightgreen)](.)
-[![Inference Latency](https://img.shields.io/badge/Inference-38ms%20%28CPU%29-blue)](.)
-[![Tests](https://img.shields.io/badge/Pytest-14%2F14%20Passed-success)](.)
-[![Frontend](https://img.shields.io/badge/Vitest-12%2F12%20Passed-success)](.)
+[![Inference Latency](https://img.shields.io/badge/Inference-53ms%20%28CPU%29-blue)](.)
+[![Tests](https://img.shields.io/badge/Pytest-16%2F16%20Passed-success)](.)
+[![Frontend](https://img.shields.io/badge/Vitest-19%2F19%20Passed-success)](.)
 
 A 10-day autoregressive climate forecast and multiverse shock-simulation digital twin for the Indian subcontinent, operating on the official 1-degree contract grid ($32 \times 36$, 6 prognostic channels).
 
@@ -15,9 +15,9 @@ A 10-day autoregressive climate forecast and multiverse shock-simulation digital
 |---|---|---|
 | **Official Schema Validator** | **PASSED** | Validated against live FastAPI server (`serve.py` on port 8000). Both canonical JSON lists and Base64 payloads pass. |
 | **Repo Scan & Anti-Cheat Audit** | **15.0 / 15.0** | 8.0/8.0 Anti-Cheat (no mocks, genuine autoregression) + 7.0/7.0 Code Health (pipeline, server separation, README, checkpoint). |
-| **Python Regression Tests** | **14 / 14 PASSED** | Unit tests, gradient checks, Stage C/D loss steps, local grader certificate. |
-| **Frontend Test Suite** | **12 / 12 PASSED** | Vitest suite validating unit conversions, compact Gaussian support, wind speed, pressure anomaly, moisture flux, and regional proxies. |
-| **CPU Inference Benchmark** | **38 ms median** | Autoregressive 10-day rollout in 38 ms (p95 42 ms), well within the 5000 ms competition ceiling. |
+| **Python Regression Tests** | **16 / 16 PASSED** | Unit tests, gradient checks, Stage C/D loss steps, local grader certificate. |
+| **Frontend Test Suite** | **19 / 19 PASSED** | Vitest suite validating unit conversions, compact Gaussian support, wind speed, pressure anomaly, moisture flux, and regional proxies. |
+| **CPU Inference Benchmark** | **53 ms median** | Autoregressive 10-day rollout in 53 ms (p95 62 ms; engine-only, excludes HTTP/JSON overhead), well within the 5000 ms competition ceiling. |
 | **Offline Operation** | **100% Offline** | No remote CDN dependencies, bundled assets, pure NumPy model inference. |
 
 ---
