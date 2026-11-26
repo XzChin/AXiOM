@@ -144,7 +144,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
             disabled={!win || !!busy}
             onClick={handleRunReverse}
           >
-            Solve Optimal Shock Candidate
+            Find Best Evaluated Shock
           </button>
           {revResult && (
             <span className="text-xs text-slate-500">
@@ -157,7 +157,7 @@ export function ReverseMemoryView({ win, meta, task, busy }: Props) {
           <div className="mt-4 space-y-4">
             <div className="rounded-lg bg-indigo-50/70 p-4 text-xs text-indigo-950">
               <div className="font-bold">
-                Optimal Initial Shock Found: {CHANNELS[revResult.best_candidate.channel].label} amplitude of{" "}
+                Best Evaluated Candidate: {CHANNELS[revResult.best_candidate.channel].label} amplitude of{" "}
                 {revResult.best_candidate.amplitude > 0 ? "+" : ""}
                 {revResult.best_candidate.amplitude.toFixed(2)} {CHANNELS[revResult.best_candidate.channel].unit} at [
                 {revResult.best_candidate.lat}°N, {revResult.best_candidate.lon}°E]

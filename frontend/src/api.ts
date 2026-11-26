@@ -27,6 +27,8 @@ export interface EvaluationResult {
   shock_pass_rate: Record<string, Record<string, number>>;
 }
 
+export interface ModelHealth { status: string; model_name: string }
+
 export interface Meta {
   has_data: boolean; days: number; first_date: string; land_mask: number[][];
   orography_m?: number[][]; stats?: { channels: string[]; mean: number[]; std: number[] };
@@ -57,6 +59,7 @@ function post<T>(url: string, body: unknown): Promise<T> {
 
 // ---- API calls ----
 export const getMeta = () => json<Meta>("/api/meta");
+export const getModelHealth = () => post<ModelHealth>("/api/model/health", {});
 export const getWindow = (d: string) => json<Window_>(`/api/window?date=${encodeURIComponent(d)}`);
 export const getSampleWindows = () => json<Window_[]>("/api/sample-windows");
 
