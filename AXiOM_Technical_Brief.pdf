@@ -1,0 +1,106 @@
+# AXiOM — Multiverse of Monsoon
+## Track 2: Earth-System Modelling and Climate Simulation
+
+### 1. Problem and approach
+
+AXiOM is a data-driven system for India-focused monsoon forecasting and scenario simulation. It produces a 10-day rollout from recent atmospheric conditions and supports controlled perturbations to explore alternative weather scenarios.
+
+The system is designed for offline evaluation: model inference runs locally, without depending on external weather APIs or downloading model weights at runtime.
+
+### 2. Dataset
+
+Training and historical evaluation use `india_climate_train.nc`, containing 6,209 daily observations from 1 January 2005 to 31 December 2021.
+
+- Spatial grid: 32 × 36 over India and surrounding regions
+- Dynamic channels: 2-metre temperature (`t2m`), precipitation (`tp`), 10-metre u/v wind (`u10`, `v10`), mean sea-level pressure (`msl`) and total-column water vapour (`tcwv`)
+- Input: three recent days across six channels
+- Forecast horizon: ten days
+- The dataset is kept outside the Git repository; the runtime reads the configured local dataset path.
+
+### 3. Model and inference
+
+AXiOM uses MonsoonNet-lite, a lightweight NumPy-based neural forecasting model. Its learned predictor uses a 219-feature representation, dense layers of 128 and 128 units, a six-channel output and a linear skip connection. Local spatial context is incorporated through a 5 × 5 neighbourhood.
+
+The model autoregressively feeds predictions into subsequent forecast steps. Output safeguards ensure finite values and non-negative precipitation. The implementation includes training code and committed model weights.
+
+The root-level `serve.py` exposes the inference API:
+- `GET /health` — model readiness
+- `POST /simulate` — forecast rollout with optional perturbation
+
+The service is designed to run locally using `python serve.py --port 8000`.
+
+### 4. Multiverse and analysis dashboard
+
+The dashboard provides historical-window exploration and analysis tools around the model API:
+
+- Timeline Prime: compare forecast rollouts with historical observations.
+- Multiverse: apply spatially varying perturbations and inspect resulting scenarios.
+- Ensemble: compare multiple perturbed initial conditions.
+- Sensitivity and reverse simulation: examine model responses to selected inputs and target outcomes.
+- Memory Lab: explore recovery and compensation behaviour in modelled scenarios.
+- Trust and validation: inspect model health, numerical validity and evidence-based checks.
+
+Derived quantities and proxy indicators are identified as such. Ensemble spread is not presented as calibrated uncertainty. Sensitivity and reverse-simulation results describe model responses, not proven atmospheric causality. Memory Lab is a conceptual model analysis, not a claim that the atmosphere has literal memory.
+
+---
+
+**INSERT PAGE BREAK HERE**
+
+---
+
+# AXiOM — Technical Validation and Limitations
+
+### 5. Validation
+
+The official `monsoon_r1.schema_validator` was run against the local inference server:
+
+`python -m monsoon_r1.schema_validator http://localhost:8000`
+
+**Result: all checks passed (exit code 0).**
+
+The validator successfully exercised all six combinations:
+- JSON-list input: no perturbation, warm-ocean perturbation and zero perturbation.
+- Base64 input: no perturbation, warm-ocean perturbation and zero perturbation.
+
+A historical-window smoke test using 15 June 2018 confirmed:
+- Input shape: `(3, 6, 32, 36)`
+- Available truth shape: `(10, 6, 32, 36)`
+- Historical input and truth values were finite.
+- A 10-step forecast returned finite values, with no negative precipitation values.
+
+For this one sample, the mean spatial rainfall prediction differed from the observed spatial mean by approximately **0.631 mm/day**, averaged across the ten forecast days. This is a spatial-mean comparison for one window, not grid-cell MAE or a generalised skill claim.
+
+Stored historical evaluation summaries:
+- 2018–2019: 144 windows; zero invalid windows; mean window skill approximately 0.1204.
+- 2020–2021: 145 windows; zero invalid windows; mean window skill approximately 0.1166.
+
+In the stored evaluations, Day-4 rainfall CSI exceeded persistence. These results are historical validation evidence and should not be interpreted as proof of performance on unseen 2023–2024 events.
+
+### 6. Reproducibility and repository contents
+
+Key submission components:
+- `serve.py` — root-level inference server.
+- `weights/model.npz` — trained model weights, committed as a normal Git file.
+- `training/` — model training and data-reading implementation.
+- `dashboard_server/` and `frontend/` — analysis dashboard.
+- `README.md` — setup and usage instructions.
+
+Run the inference service:
+
+`python serve.py --port 8000`
+
+Run the official validator:
+
+`python -m monsoon_r1.schema_validator http://localhost:8000`
+
+The training dataset must be supplied separately at runtime through the configured dataset path. It is not bundled as a repository data archive.
+
+### 7. Limitations and responsible interpretation
+
+The available training dataset ends in 2021. Hidden 2023–2024 weather windows are outside this historical period, so their performance must be established by the evaluator rather than assumed.
+
+The lightweight model uses local spatial context and autoregressive rollout; forecast errors can accumulate over longer horizons. The ensemble is not calibrated probabilistic uncertainty. Sensitivity and reverse simulation are model-response experiments, not causal attribution. Dashboard proxy and derived metrics should be interpreted according to their labels.
+
+### 8. Conclusion
+
+AXiOM provides an offline-capable neural forecasting service, perturbation-based scenario simulation, a supporting analysis dashboard and reproducible training components. Its inference interface passed the official schema validator, and historical smoke tests confirmed valid finite rollouts with non-negative precipitation. Further evaluation on hidden event windows is necessary to establish generalisation and competition-level forecast skill.
