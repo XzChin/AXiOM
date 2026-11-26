@@ -1,0 +1,228 @@
+**********************
+Windows PowerShell transcript start
+Start time: 20261126234057
+Username: LAPTOP-KTNNT7R6\alway
+RunAs User: LAPTOP-KTNNT7R6\alway
+Configuration Name:
+Machine: LAPTOP-KTNNT7R6 (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\alway\AppData\Local\Programs\Microsoft VS Code\661626d0e7\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 8068
+PSVersion: 5.1.26100.9818
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9818
+BuildVersion: 10.0.26100.9818
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is axiom_baseline_certification.txt
+True
+BASELINE BEFORE: 91A7707E85B3F433716FCB7A98D72A2DD944412CFDA424F209B5B5FE8AACB195
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data", help="Path to india_climate_train.nc (optional)")
+    ap.add_argument("--weights", default=str(ROOT / "weights" / "model.npz"))
+    ap.add_argument("--years", type=int, nargs="+", default=[2018, 2019])
+    ap.add_argument("--clim-end", type=int, default=2017)
+    ap.add_argument("--stride", type=int, default=5)
+    ap.add_argument("--out")
+    args = ap.parse_args()
+
+    net = Net.load(args.weights)
+    if not args.data:
+        res = run_synthetic_audit(net)
+    else:
+        from hdf5_reader import load
+        from train import calendar
+
+        data = load(args.data)[0]
+        data[:, 1] = np.maximum(data[:, 1], 0)
+        years, doy = calendar(len(data))
+        dates = [dt.date(2005, 1, 1) + dt.timedelta(days=i) for i in range(len(data))]
+        ymd = np.array([int(f"{d:%Y%m%d}") for d in dates])
+        clim = kit_stats.climatology(data[years <= args.clim_end], ymd[years <= args.clim_end])
+        std = load_std()
+        idx = np.where(np.isin(years, args.years))[0]
+        starts = [t for t in idx[::args.stride] if t - 2 >= 0 and t + 10 < len(data) and years[t + 10] in args.years]
+        L = [0, 3, 7]
+        P, T, Pe, Cl, ratios, invalid = [], [], [], [], [], 0
+        for t in starts:
+            out = net.rollout(data[t - 2:t + 1], int(doy[t]), 10)
+            invalid += bool(S.validity(out, 10))
+            true = data[t + 1:t + 11]
+            c = np.stack([kit_stats.clim_for(clim, dates[t + k]) for k in range(1, 11)])
+            P.append(out[L]); T.append(true[L]); Cl.append(c[L]); Pe.append(np.repeat(data[t][None], 3, 0))
+            ratios.append(S.variance_ratio(out[7], true[7]))
+        P, T, Pe, Cl = map(np.stack, (P, T, Pe, Cl))
+        sk = [S.skill_vs_best_ref(P[i], T[i], Pe[i], Cl[i]) for i in range(len(starts))]
+        res = {
+            "mode": "era5_dataset",
+            "years": args.years,
+            "windows": len(starts),
+            "invalid_windows": invalid,
+            "mean_window_skill": float(np.nanmean([s["ss"] for s in sk])),
+            "day8_variance_ratio": [round(float(v), 3) for v in np.nanmean(ratios, 0)],
+            "anti_blur_points": float(S.anti_blur_points(np.stack(ratios))),
+        }
+
+    txt = json.dumps(res, indent=2)
+    print(txt)
+    if args.out:
+        Path(args.out).write_text(txt)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+GRADER EXIT: 0
+{
+  "mode": "synthetic_smoke",
+  "archetypes_valid": true,
+  "warm_ocean_cert": {
+    "passed_count": 7,
+    "total_checks": 8,
+    "checks": [
+      {
+        "id": "zero_identity",
+        "name": "Zero shock equals null shock",
+        "passed": true,
+        "detail": "max |diff| = 0.000e+00"
+      },
+      {
+        "id": "day1_locality",
+        "name": "Day-1 locality within receptive field",
+        "passed": true,
+        "detail": "near_frac=0.999, outside_max=0.000e+00"
+      },
+      {
+        "id": "outward_spread",
+        "name": "Outward spread across forecast horizon",
+        "passed": true,
+        "detail": "r_day1=0.11 -> r_late=1.06 cells"
+      },
+      {
+        "id": "boundedness",
+        "name": "Bounded response (< 5 std)",
+        "passed": false,
+        "detail": "max |delta|/std = 6.58"
+      },
+      {
+        "id": "finite_physical",
+        "name": "Finite outputs and non-negative rainfall",
+        "passed": true,
+        "detail": "valid"
+      },
+      {
+        "id": "source_presence",
+        "name": "Day-1 source response present",
+        "passed": true,
+        "detail": "day1 max |delta|/std = 2.164"
+      },
+      {
+        "id": "approximate_scaling",
+        "name": "Approximate scaling (0.5x probe)",
+        "passed": true,
+        "detail": "0.5x/1.0x norm ratio = 0.560 (model diagnostic)"
+      },
+      {
+        "id": "determinism",
+        "name": "Deterministic repeatability",
+        "passed": true,
+        "detail": "max |run1 - run2| = 0.000e+00"
+      }
+    ],
+    "metrics": {
+      "max_z": 6.581833839416504,
+      "near_frac_day1": 0.9993783831596375,
+      "r_day1": 0.11493078593215676,
+      "r_late": 1.063972047056972,
+      "scale_ratio": 0.5604536563044287
+    }
+  },
+  "monsoon_stall_cert": {
+    "passed_count": 8,
+    "total_checks": 8,
+    "checks": [
+      {
+        "id": "zero_identity",
+        "name": "Zero shock equals null shock",
+        "passed": true,
+        "detail": "max |diff| = 0.000e+00"
+      },
+      {
+        "id": "day1_locality",
+        "name": "Day-1 locality within receptive field",
+        "passed": true,
+        "detail": "near_frac=1.000, outside_max=0.000e+00"
+      },
+      {
+        "id": "outward_spread",
+        "name": "Outward spread across forecast horizon",
+        "passed": true,
+        "detail": "r_day1=0.04 -> r_late=0.42 cells"
+      },
+      {
+        "id": "boundedness",
+        "name": "Bounded response (< 5 std)",
+        "passed": true,
+        "detail": "max |delta|/std = 1.75"
+      },
+      {
+        "id": "finite_physical",
+        "name": "Finite outputs and non-negative rainfall",
+        "passed": true,
+        "detail": "valid"
+      },
+      {
+        "id": "source_presence",
+        "name": "Day-1 source response present",
+        "passed": true,
+        "detail": "day1 max |delta|/std = 1.544"
+      },
+      {
+        "id": "approximate_scaling",
+        "name": "Approximate scaling (0.5x probe)",
+        "passed": true,
+        "detail": "0.5x/1.0x norm ratio = 0.502 (model diagnostic)"
+      },
+      {
+        "id": "determinism",
+        "name": "Deterministic repeatability",
+        "passed": true,
+        "detail": "max |run1 - run2| = 0.000e+00"
+      }
+    ],
+    "metrics": {
+      "max_z": 1.7506121397018433,
+      "near_frac_day1": 0.9998903870582581,
+      "r_day1": 0.041828053385985955,
+      "r_late": 0.4249245317384787,
+      "scale_ratio": 0.5020114004257897
+    }
+  }
+}
+
+
+BASELINE AFTER: 91A7707E85B3F433716FCB7A98D72A2DD944412CFDA424F209B5B5FE8AACB195
+BASELINE UNCHANGED: True
+False
+
+
+TotalRAM_GB : 15.73
+FreeRAM_GB  : 2.72
+
+
+
+
+
+TEST EXIT: 0
+GRADER EXIT: 0
+TEST EXIT: 0
+**********************
+Windows PowerShell transcript end
+End time: 20261126234101
+**********************

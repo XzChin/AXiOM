@@ -1,0 +1,724 @@
+**********************
+Windows PowerShell transcript start
+Start time: 20261126234301
+Username: LAPTOP-KTNNT7R6\alway
+RunAs User: LAPTOP-KTNNT7R6\alway
+Configuration Name:
+Machine: LAPTOP-KTNNT7R6 (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\alway\AppData\Local\Programs\Microsoft VS Code\661626d0e7\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 23024
+PSVersion: 5.1.26100.9818
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9818
+BuildVersion: 10.0.26100.9818
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is axiom_warm_ocean_investigation.txt
+
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:12:SS_REF = 0.12            # mean RMSE
+skill (vs the better of persistence / climatology) that earns the full 30
+points
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:13:CSI_SS_REF = 0.10        # heavy-rain
+CSI skill (CSI - best_ref) / (1 - best_ref) that earns the full 15 points
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:14:RAIN_THRESH = 10.0       # mm/day
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:15:BLUR_MIN_RATIO = 0.40    # spec: day-8
+spatial variance must keep >= 40% of the real one
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:16:BLUR_MAX_RATIO = 2.5     # and not be
+inflated by injected noise
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:17:STD_DEFAULT = np.array([8.0, 8.0, 3.5,
+2.5, 450.0, 20.0], "f4")   # per-channel scale (K, mm, m/s, m/s, Pa, kg/m2),
+replaced by stats.json
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:18:NULL_TOL = 1e-3          # null shock:
+max |delta| / std must stay below this (deterministic or tiny ensemble
+spread)
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:19:NONZERO_MIN = 1e-3       # a shock must
+move some channel by at least this many stds
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:20:LOCAL_MIN_FRAC = 0.60    # day 1: share
+of the perturbation response energy that must sit near the shock
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:21:DILATE = 3               # cells around
+the box that still count as "near"
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:22:MAX_SPEED_CELLS_PER_DAY = 8.0   # ~900
+km/day: faster than any atmospheric signal worth the name -> teleportation
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:23:STABLE_MAX_STD = 5.0     # |delta|
+above 5 stds anywhere = numerically exploding
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:24:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:25:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:26:# ---- basic skill ---------------------
+--------------------------------------------------------------------
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:27:def rmse_lat(pred: np.ndarray, true:
+np.ndarray) -> np.ndarray:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:28:    """Latitude-weighted RMSE per
+channel for [..., 6, 32, 36] arrays (mean over leading dims)."""
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:59:    return bad
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:60:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:61:
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:62:def variance_ratio(pred_day:
+np.ndarray, true_day: np.ndarray) -> np.ndarray:
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:63:    """Spatial variance of the
+predicted field / of the real field, per channel ([6,32,36] each)."""
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:64:    vp = pred_day.reshape(NC,
+-1).var(axis=1); vt = true_day.reshape(NC, -1).var(axis=1)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:65:    return np.where(vt > 0, vp /
+np.maximum(vt, 1e-30), np.nan)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:66:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:67:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:68:def anti_blur_points(ratios:
+np.ndarray, max_pts: float = 10.0) -> float:
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:69:    """ratios [windows, 6]. A channel
+scores fully at >= 40% of the real variance, 0 if inflated past 2.5x."""
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:70:    ok_cnt =
+np.isfinite(ratios).sum(axis=0)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:71:    r = np.where(ok_cnt > 0,
+np.nansum(np.where(np.isfinite(ratios), ratios, 0.0), axis=0) /
+np.maximum(ok_cnt, 1), np.nan)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:72:    ok = np.where(np.isfinite(r),
+np.clip(r / BLUR_MIN_RATIO, 0, 1) * (r <= BLUR_MAX_RATIO), 0.0)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:73:    return float(max_pts * ok.mean())
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:74:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:75:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:76:# ---- perturbation tests --------------
+--------------------------------------------------------------------
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:77:def _energy(delta: np.ndarray, std:
+np.ndarray) -> np.ndarray:
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:78:    """[steps,6,32,36] -> [steps,32,36]
+summed squared response in units of channel std."""
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:79:    return ((delta / std[None, :, None,
+None]) ** 2).sum(axis=1)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:80:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:81:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:82:def near_mask(box, dilate: int =
+DILATE) -> np.ndarray:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:83:    m = box_mask(box); out = m.copy()
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:84:    for _ in range(dilate):
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:86:    return out
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:87:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:88:
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:89:def causality_checks(base: np.ndarray,
+shock: np.ndarray, box, std: np.ndarray) -> dict:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:90:    """The four checks for one shock.
+base/shock are rollouts [steps,6,32,36]. Returns bools plus the numbers
+behind them."""
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:91:    d = shock - base
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:92:    res = {"finite":
+bool(np.isfinite(d).all())}
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:93:    if not res["finite"]:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:94:        return {**res, "nonzero":
+False, "localized": False, "propagates": False, "stable": False}
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:95:    z = np.abs(d / std[None, :, None,
+None])
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:96:    res["nonzero"] = bool(z.max() >=
+NONZERO_MIN)
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:97:    res["stable"] = bool(z.max() <=
+STABLE_MAX_STD)
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:98:    e = _energy(d, std); steps =
+e.shape[0]
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:99:    near = near_mask(box); cen =
+np.array([LAT[box_mask(box).any(axis=1)].mean(), 0.0])
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:100:    tot1 = e[0].sum()
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:101:    res["near_frac_day1"] =
+float(e[0][near].sum() / tot1) if tot1 > 0 else 0.0
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:102:    res["localized"] = bool(tot1 > 0
+and res["near_frac_day1"] >= LOCAL_MIN_FRAC)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:103:    # outward propagation: energy
+outside the neighbourhood grows from day 1 to days 4-8, but never faster
+than light-speed-ish
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:133:    return float(got * (1.0 if null_ok
+else 0.5))
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:134:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:135:
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:136:def null_consistent(a: np.ndarray, b:
+np.ndarray, std: np.ndarray) -> bool:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:137:    if not (np.isfinite(a).all() and
+np.isfinite(b).all()) or a.shape != b.shape:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:138:        return False
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:139:    return bool((np.abs(a - b) /
+std[None, :, None, None]).max() <= NULL_TOL)
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:140:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:141:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:142:# ---- shocks -------------------------
+---------------------------------------------------------------------
+> C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:143:def make_shock(name: str, last_state:
+np.ndarray, std: np.ndarray) -> np.ndarray:
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:144:    """delta [6,32,36] added to
+init_states[-1]. Defined here once so teams and the grader agree."""
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:145:    d = np.zeros((NC, NLAT, NLON),
+"f4")
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:146:    if name == "warm_ocean":
+            # +3 C and +15% moisture over the Bay of Bengal box
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:147:        m =
+box_mask(BOX_BAY_OF_BENGAL); d[0][m] = 3.0; d[5][m] = 0.15 * last_state[5][m]
+  C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\.venv\Lib\si
+te-packages\monsoon_r1\scoring.py:148:    elif name == "monsoon_stall":
+            # -40% of the incoming wind over the Arabian Sea box
+  evaluation\local_grader.py:62:    return float((energy_2d * dist).sum() /
+tot)
+  evaluation\local_grader.py:63:
+  evaluation\local_grader.py:64:
+> evaluation\local_grader.py:65:def shock_certificate(
+  evaluation\local_grader.py:66:    net: Net,
+  evaluation\local_grader.py:67:    init_states: np.ndarray,
+  evaluation\local_grader.py:68:    doy: int,
+  evaluation\local_grader.py:69:    delta: np.ndarray,
+  evaluation\local_grader.py:70:    box: Optional[tuple[float, float, float,
+float]] = None,
+  evaluation\local_grader.py:71:    std: Optional[np.ndarray] = None,
+  evaluation\local_grader.py:72:    steps: int = 10,
+  evaluation\local_grader.py:73:) -> dict:
+  evaluation\local_grader.py:109:    outward_grows = late_out > 1.5 *
+float(out_e[0]) + 1e-12 and r_late >= r_day1
+  evaluation\local_grader.py:110:
+  evaluation\local_grader.py:111:    val_violations = S.validity(run1, steps)
+> evaluation\local_grader.py:112:    max_z = float(z.max()) if
+np.isfinite(z).all() else float("inf")
+> evaluation\local_grader.py:113:    day1_max_z = float(z[0].max()) if
+np.isfinite(z[0]).all() else float("inf")
+  evaluation\local_grader.py:114:
+  evaluation\local_grader.py:115:    norm1 = float(np.linalg.norm(diff[0] /
+std_arr[:, None, None]))
+  evaluation\local_grader.py:116:    norm_half =
+float(np.linalg.norm(half_diff[0] / std_arr[:, None, None]))
+  evaluation\local_grader.py:117:    scale_ratio = float(norm_half / norm1)
+if norm1 > 1e-9 else 0.0
+  evaluation\local_grader.py:118:
+  evaluation\local_grader.py:119:    checks = [
+  evaluation\local_grader.py:120:        {"id": "zero_identity", "name":
+"Zero shock equals null shock", "passed": zero_diff == 0.0, "detail": f"max
+|diff| = {zero_diff:.3e}"},
+  evaluation\local_grader.py:121:        {"id": "day1_locality", "name":
+"Day-1 locality within receptive field", "passed": outside_day1 == 0.0 and
+near_frac_day1 >= 0.60, "detail": f"near_frac={near_frac_day1:.3f},
+outside_max={outside_day1:.3e}"},
+  evaluation\local_grader.py:122:        {"id": "outward_spread", "name":
+"Outward spread across forecast horizon", "passed": outward_grows, "detail":
+f"r_day1={r_day1:.2f} -> r_late={r_late:.2f} cells"},
+> evaluation\local_grader.py:123:        {"id": "boundedness", "name":
+"Bounded response (< 5 std)", "passed": max_z <= S.STABLE_MAX_STD, "detail":
+f"max |delta|/std = {max_z:.2f}"},
+  evaluation\local_grader.py:124:        {"id": "finite_physical", "name":
+"Finite outputs and non-negative rainfall", "passed": len(val_violations) ==
+0, "detail": "valid" if not val_violations else ", ".join(val_violations)},
+> evaluation\local_grader.py:125:        {"id": "source_presence", "name":
+"Day-1 source response present", "passed": day1_max_z >= S.NONZERO_MIN,
+"detail": f"day1 max |delta|/std = {day1_max_z:.3f}"},
+  evaluation\local_grader.py:126:        {"id": "approximate_scaling",
+"name": "Approximate scaling (0.5x probe)", "passed": 0.2 <= scale_ratio <=
+0.8 if norm1 > 1e-9 else False, "detail": f"0.5x/1.0x norm ratio =
+{scale_ratio:.3f} (model diagnostic)"},
+  evaluation\local_grader.py:127:        {"id": "determinism", "name":
+"Deterministic repeatability", "passed": repeat_diff == 0.0, "detail": f"max
+|run1 - run2| = {repeat_diff:.3e}"},
+  evaluation\local_grader.py:128:    ]
+  evaluation\local_grader.py:129:    return {
+  evaluation\local_grader.py:130:        "passed_count": sum(1 for c in
+checks if c["passed"]),
+  evaluation\local_grader.py:131:        "total_checks": len(checks),
+  evaluation\local_grader.py:132:        "checks": checks,
+  evaluation\local_grader.py:133:        "metrics": {
+> evaluation\local_grader.py:134:            "max_z": max_z,
+  evaluation\local_grader.py:135:            "near_frac_day1":
+near_frac_day1,
+  evaluation\local_grader.py:136:            "r_day1": r_day1,
+  evaluation\local_grader.py:137:            "r_late": r_late,
+  evaluation\local_grader.py:138:            "scale_ratio": scale_ratio,
+  evaluation\local_grader.py:139:        },
+  evaluation\local_grader.py:140:    }
+  evaluation\local_grader.py:141:
+  evaluation\local_grader.py:142:
+  evaluation\local_grader.py:170:        if S.validity(out, 10):
+  evaluation\local_grader.py:171:            validity_ok = False
+  evaluation\local_grader.py:172:    _, doy, x = archetypes[0]
+> evaluation\local_grader.py:173:    warm = S.make_shock("warm_ocean",
+x[-1], std)
+  evaluation\local_grader.py:174:    stall = S.make_shock("monsoon_stall",
+x[-1], std)
+  evaluation\local_grader.py:175:    return {
+  evaluation\local_grader.py:176:        "mode": "synthetic_smoke",
+  evaluation\local_grader.py:177:        "archetypes_valid": validity_ok,
+> evaluation\local_grader.py:178:        "warm_ocean_cert":
+shock_certificate(net, x, doy, warm, S.BOX_BAY_OF_BENGAL, std),
+> evaluation\local_grader.py:179:        "monsoon_stall_cert":
+shock_certificate(net, x, doy, stall, S.BOX_ARABIAN_SEA, std),
+  evaluation\local_grader.py:180:    }
+  evaluation\local_grader.py:181:
+  evaluation\local_grader.py:182:
+  evaluation\local_grader.py:183:def main() -> int:
+  evaluation\local_grader.py:184:    ap = argparse.ArgumentParser()
+  evaluation\local_grader.py:185:    ap.add_argument("--data", help="Path to
+india_climate_train.nc (optional)")
+  evaluation\local_grader.py:186:    ap.add_argument("--weights",
+default=str(ROOT / "weights" / "model.npz"))
+  evaluation\local_grader.py:187:    ap.add_argument("--years", type=int,
+nargs="+", default=[2018, 2019])
+{
+ "channels": [
+  "t2m",
+  "tp",
+  "u10",
+  "v10",
+  "msl",
+  "tcwv"
+ ],
+ "mean": [
+  292.3567810058594,
+  3.618067502975464,
+  0.8876520991325378,
+  0.19133219122886658,
+  101122.078125,
+  30.033491134643555
+ ],
+ "std": [
+  13.46363353729248,
+  7.553342342376709,
+  2.8989806175231934,
+  2.4269521236419678,
+  619.0198364257812,
+  20.49437141418457
+ ]
+}
+  src\monsoon\model.py:5:NC, H, W = 6, 32, 36
+  src\monsoon\model.py:6:N = H * W
+> src\monsoon\model.py:7:RADIUS = 2            # per-step receptive radius
+in cells
+> src\monsoon\model.py:8:LIMIT = 4.0           # tendency bound, in units of
+tendency std
+> src\monsoon\model.py:9:ANOM_CLIP = np.array([6.0, 1.9, 6.0, 6.0, 6.0,
+5.0], np.float32)  # per-cell bound on normalised anomalies
+  src\monsoon\model.py:10:LAT = np.arange(6.5, 38.0, 1.0)
+  src\monsoon\model.py:11:LON = np.arange(65.5, 101.0, 1.0)
+  src\monsoon\model.py:12:
+  src\monsoon\model.py:13:
+  src\monsoon\model.py:82:        i = self.n_layers - 1
+  src\monsoon\model.py:83:        raw = h @ self.a[f"w{i}"] +
+self.a[f"b{i}"] + x @ self.a["skip"]
+> src\monsoon\model.py:84:        out = LIMIT * np.tanh(raw / LIMIT)
+  src\monsoon\model.py:85:        return (out, cache) if keep else out
+  src\monsoon\model.py:86:
+> src\monsoon\model.py:87:    def rollout(self, init, doy, steps):
+  src\monsoon\model.py:88:        """init [3,6,32,36] physical; doy = day of
+year of init[-1]. Returns [steps,6,32,36] physical."""
+  src\monsoon\model.py:89:        a = self.a
+  src\monsoon\model.py:90:        days = np.array([doy - 2, doy - 1, doy],
+np.float32)
+  src\monsoon\model.py:91:        clim = self.climatology(days)
+  src\monsoon\model.py:97:            tend =
+self.forward(self.features(z[0], z[1], z[2], [cur]))
+  src\monsoon\model.py:98:            nxt = z[2] + (tend[None] *
+a["tend_std"] + a["tend_mean"]) / a["anom_std"]
+> src\monsoon\model.py:99:            nxt = np.clip(nxt, -ANOM_CLIP,
+ANOM_CLIP)
+  src\monsoon\model.py:100:            c = self.climatology([cur + 1])[0]
+  src\monsoon\model.py:101:            y = nxt[0] * a["anom_std"] + c
+  src\monsoon\model.py:102:            y[:, 1] = np.clip(y[:, 1], 0,
+np.log1p(400.0))        # rain: non-negative and bounded
+  src\monsoon\model.py:103:            y[:, 5] = np.maximum(y[:, 5], 0)
+"""Backend Shock Engine: scenario generation and model-response diagnostics."""
+from __future__ import annotations
+
+import numpy as np
+
+from dashboard_server import analysis
+
+NC, NLAT, NLON = 6, 32, 36
+
+CHANNELS = ["t2m", "tp", "u10", "v10", "msl", "tcwv"]
+
+PRESETS = {
+    "warm_ocean": {
+        "label": "Warm Bay scenario",
+        "description": "Localized near-surface air temperature and TCWV perturbation.",
+        "provenance": "MODEL SCENARIO",
+        "region": {"lat": [8.0, 20.0], "lon": [82.0, 94.0]},
+        "not_sst": True,
+    },
+    "monsoon_stall": {
+        "label": "Monsoon Stall scenario",
+        "description": "Localized reduction of both 10 m wind components.",
+        "provenance": "MODEL SCENARIO",
+        "region": {"lat": [8.0, 20.0], "lon": [65.0, 75.0]},
+        "not_sst": False,
+    },
+    "zero": {
+        "label": "Zero / Null Shock",
+        "description": "No perturbation; identity comparison.",
+        "provenance": "CONTROL",
+        "region": None,
+        "not_sst": False,
+    },
+}
+
+
+def _validate_state(state):
+    arr = np.asarray(state, dtype=np.float32)
+    if arr.shape != (3, NC, NLAT, NLON):
+        raise ValueError("init_states must have shape (3, 6, 32, 36).")
+    if not np.isfinite(arr).all():
+        raise ValueError("init_states must contain only finite values.")
+    return arr
+
+
+def _validate_doy(doy):
+    arr = np.asarray(doy, dtype=np.float64)
+    if arr.shape != (2,) or not np.isfinite(arr).all():
+        raise ValueError("doy_sincos must contain two finite values.")
+    if not np.isclose(np.linalg.norm(arr), 1.0, atol=0.02):
+        raise ValueError("doy_sincos must be a normalized sine/cosine pair.")
+    return arr.tolist()
+
+
+def build_preset(name, last_state):
+    if name not in PRESETS:
+        raise ValueError("Unknown shock preset.")
+    last = np.asarray(last_state, dtype=np.float32)
+    if last.shape != (NC, NLAT, NLON) or not np.isfinite(last).all():
+        raise ValueError("last_state must have shape (6, 32, 36) and finite values.")
+
+    delta = np.zeros((NC, NLAT, NLON), dtype=np.float32)
+    lat = np.arange(6.5, 38.0, 1.0)[:, None]
+    lon = np.arange(65.5, 101.0, 1.0)[None, :]
+
+    if name == "warm_ocean":
+        mask = (lat >= 8) & (lat <= 20) & (lon >= 82) & (lon <= 94)
+        delta[0][mask] = 3.0
+        delta[5][mask] = 0.15 * last[5][mask]
+
+    elif name == "monsoon_stall":
+        mask = (lat >= 8) & (lat <= 20) & (lon >= 65) & (lon <= 75)
+        delta[2][mask] = -0.40 * last[2][mask]
+        delta[3][mask] = -0.40 * last[3][mask]
+
+    return delta
+
+
+def build_custom(channel, center_lat, center_lon, radius, amplitude):
+    return analysis._gaussian_shock(
+        channel, center_lat, center_lon, radius, amplitude
+    )
+
+
+def butterfly_metrics(base, shocked, perturbation):
+    base = np.asarray(base, dtype=np.float32)
+    shocked = np.asarray(shocked, dtype=np.float32)
+    perturbation = np.asarray(perturbation, dtype=np.float32)
+
+    if base.shape != shocked.shape or base.ndim != 4:
+        raise ValueError("Base and shocked rollouts must have matching [day, 6, 32, 36] shapes.")
+    if base.shape[1:] != (NC, NLAT, NLON):
+        raise ValueError("Rollouts must contain six channels on a 32x36 grid.")
+    if perturbation.shape != (NC, NLAT, NLON):
+        raise ValueError("Perturbation must have shape (6, 32, 36).")
+    if not all(np.isfinite(x).all() for x in (base, shocked, perturbation)):
+        raise ValueError("Butterfly inputs must contain only finite values.")
+
+    std = analysis._stats_std()
+    if std.shape != (NC,) or not np.isfinite(std).all() or np.any(std <= 0):
+        raise ValueError("Model channel standard deviations are invalid.")
+
+    source_weight = np.abs(perturbation).sum(axis=0)
+    total_source = float(source_weight.sum())
+
+    lat_grid = np.broadcast_to(np.arange(6.5, 38.0, 1.0)[:, None], (NLAT, NLON))
+    lon_grid = np.broadcast_to(np.arange(65.5, 101.0, 1.0)[None, :], (NLAT, NLON))
+
+    if total_source > 0:
+        center_lat = float((lat_grid * source_weight).sum() / total_source)
+        center_lon = float((lon_grid * source_weight).sum() / total_source)
+    else:
+        center_lat = center_lon = None
+
+    rows = []
+    for day in range(len(base)):
+        diff = shocked[day] - base[day]
+        z = diff / std[:, None, None]
+        cell_energy = np.sum(z ** 2, axis=0)
+        affected = cell_energy > 0.05
+        energy = float(cell_energy[affected].sum())
+        affected_count = int(affected.sum())
+
+        if energy > 0 and center_lat is not None:
+            distance = np.hypot(lat_grid - center_lat, lon_grid - center_lon)
+            radius = float((distance[affected] * cell_energy[affected]).sum() / energy)
+        else:
+            radius = 0.0
+
+        rows.append({
+            "day": day + 1,
+            "energy": energy,
+            "maxZ": float(np.abs(z).max()),
+            "affectedCells": affected_count,
+            "coverageFrac": affected_count / (NLAT * NLON) * 100.0,
+            "meanRadius": radius,
+        })
+
+    return rows
+
+
+def run_shock(init_states, doy_sincos, scenario="warm_ocean",
+              channel=None, center_lat=15.0, center_lon=88.0,
+              radius=3.0, amplitude=2.5, steps=10):
+    init = _validate_state(init_states)
+    doy = _validate_doy(doy_sincos)
+
+    if isinstance(steps, bool) or not isinstance(steps, int) or not 1 <= steps <= 30:
+        raise ValueError("steps must be an integer from 1 to 30.")
+
+    if scenario in PRESETS:
+        delta = build_preset(scenario, init[-1])
+        metadata = dict(PRESETS[scenario])
+    elif scenario == "custom":
+        if channel is None:
+            raise ValueError("Custom scenario requires a channel.")
+        delta = build_custom(channel, center_lat, center_lon, radius, amplitude)
+        metadata = {
+            "label": "Custom Gaussian scenario",
+            "description": "Localized Gaussian perturbation.",
+            "provenance": "USER CONFIGURED MODEL SCENARIO",
+            "region": {"center_lat": center_lat, "center_lon": center_lon, "radius": radius},
+            "not_sst": False,
+        }
+    else:
+        raise ValueError("scenario must be warm_ocean, monsoon_stall, zero, or custom.")
+
+    base, ms_base = analysis._call_simulate(init.tolist(), doy, steps, None)
+    shocked, ms_shock = analysis._call_simulate(init.tolist(), doy, steps, delta.tolist())
+
+    return {
+        "scenario": scenario,
+        "metadata": metadata,
+        "perturbation": delta.tolist(),
+        "baseline_rollout": base.tolist(),
+        "shocked_rollout": shocked.tolist(),
+        "butterfly_metrics": butterfly_metrics(base, shocked, delta),
+        "inference_ms": ms_base + ms_shock,
+        "provenance": {
+            "rollouts": "MODEL",
+            "perturbation": "MODEL SCENARIO",
+            "difference_and_butterfly_metrics": "DERIVED",
+            "causality_claim": False,
+        },
+        "note": "Model-conditioned sensitivity scenario; not evidence of physical atmospheric causality.",
+    }
+{
+  "mode": "synthetic_smoke",
+  "archetypes_valid": true,
+  "warm_ocean_cert": {
+    "passed_count": 7,
+    "total_checks": 8,
+    "checks": [
+      {
+        "id": "zero_identity",
+        "name": "Zero shock equals null shock",
+        "passed": true,
+        "detail": "max |diff| = 0.000e+00"
+      },
+      {
+        "id": "day1_locality",
+        "name": "Day-1 locality within receptive field",
+        "passed": true,
+        "detail": "near_frac=0.999, outside_max=0.000e+00"
+      },
+      {
+        "id": "outward_spread",
+        "name": "Outward spread across forecast horizon",
+        "passed": true,
+        "detail": "r_day1=0.11 -> r_late=1.06 cells"
+      },
+      {
+        "id": "boundedness",
+        "name": "Bounded response (< 5 std)",
+        "passed": false,
+        "detail": "max |delta|/std = 6.58"
+      },
+      {
+        "id": "finite_physical",
+        "name": "Finite outputs and non-negative rainfall",
+        "passed": true,
+        "detail": "valid"
+      },
+      {
+        "id": "source_presence",
+        "name": "Day-1 source response present",
+        "passed": true,
+        "detail": "day1 max |delta|/std = 2.164"
+      },
+      {
+        "id": "approximate_scaling",
+        "name": "Approximate scaling (0.5x probe)",
+        "passed": true,
+        "detail": "0.5x/1.0x norm ratio = 0.560 (model diagnostic)"
+      },
+      {
+        "id": "determinism",
+        "name": "Deterministic repeatability",
+        "passed": true,
+        "detail": "max |run1 - run2| = 0.000e+00"
+      }
+    ],
+    "metrics": {
+      "max_z": 6.581833839416504,
+      "near_frac_day1": 0.9993783831596375,
+      "r_day1": 0.11493078593215676,
+      "r_late": 1.063972047056972,
+      "scale_ratio": 0.5604536563044287
+    }
+  },
+  "monsoon_stall_cert": {
+    "passed_count": 8,
+    "total_checks": 8,
+    "checks": [
+      {
+        "id": "zero_identity",
+        "name": "Zero shock equals null shock",
+        "passed": true,
+        "detail": "max |diff| = 0.000e+00"
+      },
+      {
+        "id": "day1_locality",
+        "name": "Day-1 locality within receptive field",
+        "passed": true,
+        "detail": "near_frac=1.000, outside_max=0.000e+00"
+      },
+      {
+        "id": "outward_spread",
+        "name": "Outward spread across forecast horizon",
+        "passed": true,
+        "detail": "r_day1=0.04 -> r_late=0.42 cells"
+      },
+      {
+        "id": "boundedness",
+        "name": "Bounded response (< 5 std)",
+        "passed": true,
+        "detail": "max |delta|/std = 1.75"
+      },
+      {
+        "id": "finite_physical",
+        "name": "Finite outputs and non-negative rainfall",
+        "passed": true,
+        "detail": "valid"
+      },
+      {
+        "id": "source_presence",
+        "name": "Day-1 source response present",
+        "passed": true,
+        "detail": "day1 max |delta|/std = 1.544"
+      },
+      {
+        "id": "approximate_scaling",
+        "name": "Approximate scaling (0.5x probe)",
+        "passed": true,
+        "detail": "0.5x/1.0x norm ratio = 0.502 (model diagnostic)"
+      },
+      {
+        "id": "determinism",
+        "name": "Deterministic repeatability",
+        "passed": true,
+        "detail": "max |run1 - run2| = 0.000e+00"
+      }
+    ],
+    "metrics": {
+      "max_z": 1.7506121397018433,
+      "near_frac_day1": 0.9998903870582581,
+      "r_day1": 0.041828053385985955,
+      "r_late": 0.4249245317384787,
+      "scale_ratio": 0.5020114004257897
+    }
+  }
+}
+
+Algorithm : SHA256
+Hash      : 91A7707E85B3F433716FCB7A98D72A2DD944412CFDA424F209B5B5FE8AACB195
+Path      : C:\Users\alway\OneDrive\Desktop\yugantar\multiverse-of-monsoon\AX
+            IOM\weights\model.npz
+
+False
+
+
+
+
+TotalRAM_GB : 15.73
+FreeRAM_GB  : 2.53
+
+
+
+**********************
+Windows PowerShell transcript end
+End time: 20261126234302
+**********************

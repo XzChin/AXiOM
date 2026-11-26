@@ -1,0 +1,27 @@
+{
+  "models": {
+    "baseline": {
+      "file": "weights/model.npz",
+      "checks": {
+        "shape_correct": true,
+        "finite": true,
+        "rain_nonnegative": true,
+        "tcwv_nonnegative": true
+      },
+      "inference_ms": 39.504,
+      "sha256": "91a7707e85b3f433716fcb7a98d72a2dd944412cfda424f209b5b5fe8aacb195"
+    },
+    "V2_experimental": {
+      "file": "weights/experiments/axiom_candidate_v2.npz",
+      "checks": {
+        "shape_correct": true,
+        "finite": true,
+        "rain_nonnegative": true,
+        "tcwv_nonnegative": true
+      },
+      "inference_ms": 32.176,
+      "sha256": "25f7a31bdb3332eed84dc75f22104e1a4ea7acd78f15a3b999984dd2cc9e6013"
+    }
+  },
+  "production_selection": "baseline"
+}

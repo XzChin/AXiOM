@@ -1,0 +1,4 @@
+Production: baseline (weights/model.npz)
+Experimental: V2 (weights/experiments/axiom_candidate_v2.npz)
+Reason: V2 improves selected forecast metrics but has worse warm-ocean shock stability.
+No production weights overwritten.

@@ -1,0 +1,19 @@
+{
+  "mode": "era5_dataset",
+  "years": [
+    2020,
+    2021
+  ],
+  "windows": 145,
+  "invalid_windows": 0,
+  "mean_window_skill": 0.1166266007133419,
+  "day8_variance_ratio": [
+    1.008,
+    0.365,
+    0.797,
+    0.753,
+    0.908,
+    0.887
+  ],
+  "anti_blur_points": 9.8560321194002
+}

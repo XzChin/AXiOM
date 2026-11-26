@@ -1,0 +1,126 @@
+{
+  "mode": "synthetic_smoke",
+  "archetypes_valid": true,
+  "warm_ocean_cert": {
+    "passed_count": 7,
+    "total_checks": 8,
+    "checks": [
+      {
+        "id": "zero_identity",
+        "name": "Zero shock equals null shock",
+        "passed": true,
+        "detail": "max |diff| = 0.000e+00"
+      },
+      {
+        "id": "day1_locality",
+        "name": "Day-1 locality within receptive field",
+        "passed": true,
+        "detail": "near_frac=0.999, outside_max=0.000e+00"
+      },
+      {
+        "id": "outward_spread",
+        "name": "Outward spread across forecast horizon",
+        "passed": true,
+        "detail": "r_day1=0.11 -> r_late=1.06 cells"
+      },
+      {
+        "id": "boundedness",
+        "name": "Bounded response (< 5 std)",
+        "passed": false,
+        "detail": "max |delta|/std = 6.58"
+      },
+      {
+        "id": "finite_physical",
+        "name": "Finite outputs and non-negative rainfall",
+        "passed": true,
+        "detail": "valid"
+      },
+      {
+        "id": "source_presence",
+        "name": "Day-1 source response present",
+        "passed": true,
+        "detail": "day1 max |delta|/std = 2.164"
+      },
+      {
+        "id": "approximate_scaling",
+        "name": "Approximate scaling (0.5x probe)",
+        "passed": true,
+        "detail": "0.5x/1.0x norm ratio = 0.560 (model diagnostic)"
+      },
+      {
+        "id": "determinism",
+        "name": "Deterministic repeatability",
+        "passed": true,
+        "detail": "max |run1 - run2| = 0.000e+00"
+      }
+    ],
+    "metrics": {
+      "max_z": 6.581833839416504,
+      "near_frac_day1": 0.9993783831596375,
+      "r_day1": 0.11493078593215676,
+      "r_late": 1.063972047056972,
+      "scale_ratio": 0.5604536563044287
+    }
+  },
+  "monsoon_stall_cert": {
+    "passed_count": 8,
+    "total_checks": 8,
+    "checks": [
+      {
+        "id": "zero_identity",
+        "name": "Zero shock equals null shock",
+        "passed": true,
+        "detail": "max |diff| = 0.000e+00"
+      },
+      {
+        "id": "day1_locality",
+        "name": "Day-1 locality within receptive field",
+        "passed": true,
+        "detail": "near_frac=1.000, outside_max=0.000e+00"
+      },
+      {
+        "id": "outward_spread",
+        "name": "Outward spread across forecast horizon",
+        "passed": true,
+        "detail": "r_day1=0.04 -> r_late=0.42 cells"
+      },
+      {
+        "id": "boundedness",
+        "name": "Bounded response (< 5 std)",
+        "passed": true,
+        "detail": "max |delta|/std = 1.75"
+      },
+      {
+        "id": "finite_physical",
+        "name": "Finite outputs and non-negative rainfall",
+        "passed": true,
+        "detail": "valid"
+      },
+      {
+        "id": "source_presence",
+        "name": "Day-1 source response present",
+        "passed": true,
+        "detail": "day1 max |delta|/std = 1.544"
+      },
+      {
+        "id": "approximate_scaling",
+        "name": "Approximate scaling (0.5x probe)",
+        "passed": true,
+        "detail": "0.5x/1.0x norm ratio = 0.502 (model diagnostic)"
+      },
+      {
+        "id": "determinism",
+        "name": "Deterministic repeatability",
+        "passed": true,
+        "detail": "max |run1 - run2| = 0.000e+00"
+      }
+    ],
+    "metrics": {
+      "max_z": 1.7506121397018433,
+      "near_frac_day1": 0.9998903870582581,
+      "r_day1": 0.041828053385985955,
+      "r_late": 0.4249245317384787,
+      "scale_ratio": 0.5020114004257897
+    }
+  }
+}
