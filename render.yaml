@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: axiom-digital-twin
+    runtime: python
+    plan: free
+    region: singapore
+    branch: experiment/shock-stability
+    buildCommand: pip install -r requirements/runtime.txt && npm ci --prefix frontend && npm run build --prefix frontend
+    startCommand: bash scripts/start-render.sh
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: MODEL_URL
+        value: http://127.0.0.1:8000
